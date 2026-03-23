@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lead Gen & Competitive Intelligence — Internal Platform</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#09090b;--surface:#111114;--surface-2:#18181b;--surface-3:#222228;
+    --border:#27272a;--border-hover:#3f3f46;
+    --text:#d4d4d8;--text-dim:#71717a;--text-bright:#fafafa;
+    --accent:#818cf8;--accent-2:#6366f1;--accent-bg:rgba(99,102,241,.08);
+    --green:#34d399;--green-bg:rgba(52,211,153,.1);
+    --amber:#fbbf24;--amber-bg:rgba(251,191,36,.1);
+    --cyan:#22d3ee;--cyan-bg:rgba(34,211,238,.08);
+    --rose:#fb7185;--rose-bg:rgba(251,113,133,.08);
+    --user:#a78bfa;--user-bg:rgba(167,139,250,.08);
+    --auto:#34d399;--auto-bg:rgba(52,211,153,.06);
+  }
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+
+  /* ── Slides ── */
+  .slides{scroll-snap-type:y mandatory;overflow-y:scroll;height:100vh}
+  .slide{scroll-snap-align:start;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:60px 80px;position:relative;overflow:hidden}
+  .slide-number{position:absolute;top:28px;right:36px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);opacity:.5}
+
+  /* ── Animations ── */
+  .anim{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim.visible{opacity:1;transform:translateY(0)}
+  .anim-left{opacity:0;transform:translateX(-30px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim-left.visible{opacity:1;transform:translateX(0)}
+  .anim-right{opacity:0;transform:translateX(30px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim-right.visible{opacity:1;transform:translateX(0)}
+  .anim-scale{opacity:0;transform:scale(.92);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim-scale.visible{opacity:1;transform:scale(1)}
+  .anim-fade{opacity:0;transition:opacity .8s ease}
+  .anim-fade.visible{opacity:1}
+  .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+  .d5{transition-delay:.5s}.d6{transition-delay:.6s}.d7{transition-delay:.7s}.d8{transition-delay:.8s}
+  .d9{transition-delay:.9s}.d10{transition-delay:1s}.d11{transition-delay:1.1s}
+
+  /* ── Typography ── */
+  .slide-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);font-weight:600;margin-bottom:16px}
+  .slide-title{font-size:42px;font-weight:800;color:var(--text-bright);letter-spacing:-.03em;line-height:1.15;margin-bottom:20px;max-width:800px}
+  .slide-subtitle{font-size:18px;color:var(--text);line-height:1.6;max-width:640px;font-weight:400}
+  .slide-subtitle strong{color:var(--text-bright);font-weight:600}
+
+  /* ── Nav dots ── */
+  .nav-dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100}
+  .nav-dot{width:8px;height:8px;border-radius:50%;background:var(--surface-3);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+  .nav-dot.active{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px rgba(129,140,248,.4)}
+  .nav-dot:hover{border-color:var(--accent)}
+
+  /* ── Title slide ── */
+  .title-slide{justify-content:center;align-items:flex-start}
+  .vmg-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:500;color:var(--text-dim);margin-bottom:32px}
+  .title-main{font-size:56px;font-weight:800;color:var(--text-bright);letter-spacing:-.04em;line-height:1.1;margin-bottom:16px}
+  .title-desc{font-size:20px;color:var(--text-dim);max-width:600px;line-height:1.5;margin-bottom:40px}
+  .title-stats{display:flex;gap:40px}
+  .title-stat-value{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--text-bright)}
+  .title-stat-label{font-size:12px;color:var(--text-dim);margin-top:2px}
+  .slide-footer{position:absolute;bottom:28px;left:80px;right:80px;display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);opacity:.5}
+
+  /* ── Problem cards ── */
+  .problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:32px;max-width:1000px}
+  .problem-card{padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;transition:border-color .3s,box-shadow .3s}
+  .problem-card:hover{border-color:var(--border-hover);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+  .problem-card-title{font-size:15px;font-weight:600;color:var(--text-bright);margin-bottom:8px}
+  .problem-card-text{font-size:13px;color:var(--text-dim);line-height:1.6}
+
+  /* ── Architecture ── */
+  .arch-container{margin-top:28px;max-width:1100px;width:100%}
+  .arch-flow{display:flex;align-items:center;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+  .arch-flow-node{padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:6px;transition:border-color .3s,box-shadow .3s}
+  .arch-flow-node .model-label{color:var(--green);font-family:'JetBrains Mono',monospace;font-size:10px}
+  .arch-flow-node.user-node{border-color:var(--user);background:var(--user-bg)}
+  .arch-flow-node.user-node .node-badge{color:var(--user);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+  .arch-arrow{color:var(--text-dim);font-size:14px}
+
+  .arch-orch{padding:20px 24px;background:var(--accent-bg);border:1px solid var(--accent-2);border-radius:10px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;transition:box-shadow .4s}
+  .arch-orch.glow{box-shadow:0 0 30px rgba(99,102,241,.12)}
+  .arch-orch-name{font-size:16px;font-weight:700;color:var(--text-bright);margin-bottom:4px}
+  .arch-orch-desc{font-size:12px;color:var(--text-dim);max-width:500px;line-height:1.5}
+  .arch-orch-model{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);padding:4px 10px;background:rgba(99,102,241,.12);border-radius:4px;font-weight:500;white-space:nowrap}
+
+  .arch-connector{display:flex;justify-content:center;height:24px;margin-bottom:16px}
+  .arch-connector-line{width:2px;height:100%;background:linear-gradient(to bottom,var(--accent-2),var(--border))}
+
+  .arch-agents-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);font-weight:600;margin-bottom:12px}
+  .arch-agents-label .hl{color:var(--green)}
+
+  .arch-agents{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:8px}
+
+  .arch-agent{padding:10px 10px 8px;background:var(--surface);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+  .arch-agent:hover{border-color:var(--border-hover);background:var(--surface-2);transform:translateY(-2px)}
+  .arch-agent.expanded{border-color:var(--accent);background:var(--accent-bg)}
+  .arch-agent.user-step{border-left:2px solid var(--user)}
+  .arch-agent.auto-step{border-left:2px solid var(--auto)}
+  .arch-agent-step{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);font-weight:500;margin-bottom:3px}
+  .arch-agent-name{font-size:11px;font-weight:600;color:var(--text-bright);line-height:1.25}
+  .arch-agent-mode{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;padding:1px 5px;border-radius:2px;display:inline-block}
+  .arch-agent-mode.auto{color:var(--auto);background:var(--auto-bg)}
+  .arch-agent-mode.user{color:var(--user);background:var(--user-bg)}
+
+  /* ── Design decisions ── */
+  .decision-list{margin-top:32px;max-width:800px;display:flex;flex-direction:column;gap:24px}
+  .decision-item{display:flex;gap:20px}
+  .decision-number{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent);min-width:36px}
+  .decision-title{font-size:16px;font-weight:600;color:var(--text-bright);margin-bottom:6px}
+  .decision-text{font-size:14px;color:var(--text-dim);line-height:1.6}
+  .decision-text strong{color:var(--text)}
+
+  /* ── Model cards ── */
+  .model-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:32px;max-width:1000px}
+  .model-card{padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;transition:all .3s}
+  .model-card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+  .model-card-role{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);font-weight:600;margin-bottom:8px}
+  .model-card-name{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;margin-bottom:12px}
+  .model-card-name.gemini{color:var(--cyan)}.model-card-name.gpt{color:var(--accent)}.model-card-name.grok{color:var(--green)}
+  .model-card-why{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:14px}
+  .model-card-stats{display:flex;gap:16px}
+  .model-stat{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim)}
+  .model-stat strong{color:var(--text-bright);font-weight:600}
+
+  /* ── Pulse animation ── */
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  .pulse{animation:pulse 2s ease-in-out infinite}
+
+  @media(max-width:900px){
+    .slide{padding:40px}
+    .title-main{font-size:36px}
+    .slide-title{font-size:30px}
+    .arch-agents{grid-template-columns:repeat(3,1fr)}
+    .model-cards{grid-template-columns:1fr}
+    .nav-dots{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-dots" id="navDots"></div>
+
+<div class="slides" id="slides">
+
+  <!-- ═══ SLIDE 1: Title ═══ -->
+  <div class="slide title-slide" data-label="Title">
+    <span class="slide-number">01</span>
+    <div class="vmg-badge anim">VMG Digital · GTM Automation</div>
+    <div class="title-main anim d1">Lead Gen & Competitive Intelligence</div>
+    <div class="title-desc anim d2">Built for our GTM team to automate the outreach function. Scrape prospects, run AI-powered competitive analysis, and push qualified leads to outreach platforms — with every capability available via CLI for agent automation.</div>
+    <div class="title-stats anim d3">
+      <div><div class="title-stat-value">17</div><div class="title-stat-label">CLI commands</div></div>
+      <div><div class="title-stat-value">7</div><div class="title-stat-label">AI analyses</div></div>
+      <div><div class="title-stat-value">2</div><div class="title-stat-label">Scraping modes</div></div>
+      <div><div class="title-stat-value">1</div><div class="title-stat-label">Outreach integration</div></div>
+    </div>
+    <div class="slide-footer"><span>Anton Eliasson</span><span>March 2026</span></div>
+  </div>
+
+  <!-- ═══ SLIDE 2: Problem ═══ -->
+  <div class="slide" data-label="Problem">
+    <span class="slide-number">02</span>
+    <div class="slide-label anim">The Problem</div>
+    <div class="slide-title anim d1">Manual outreach doesn't scale</div>
+    <div class="slide-subtitle anim d2">Our GTM team was spending hours on prospect research and competitive analysis that followed repeatable patterns — the kind of work agents should be doing.</div>
+    <div class="problem-grid">
+      <div class="problem-card anim d3"><div class="problem-card-title">Manual prospect sourcing</div><div class="problem-card-text">Finding and qualifying leads from LinkedIn required hours of manual search, copy-paste, and data cleanup per campaign.</div></div>
+      <div class="problem-card anim d4"><div class="problem-card-title">No competitive visibility</div><div class="problem-card-text">Understanding what competitors were doing in paid media meant manually browsing ad libraries with no structured analysis.</div></div>
+      <div class="problem-card anim d5"><div class="problem-card-title">Disconnected tools</div><div class="problem-card-text">Scraping, enrichment, analysis, and outreach each lived in separate tools with no shared pipeline.</div></div>
+      <div class="problem-card anim d6"><div class="problem-card-title">No agent access</div><div class="problem-card-text">Automation was possible in theory but impossible in practice — no CLI, no skill manifests, no structured output for agents to consume.</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3: Architecture ═══ -->
+  <div class="slide" data-label="Architecture">
+    <span class="slide-number">03</span>
+    <div class="slide-label anim">System Architecture</div>
+    <div class="slide-title anim d1">Human-agent parity by design</div>
+    <div class="slide-subtitle anim d2">Every API endpoint accessible from both web and CLI. Shared validation. Same data model. Same isolation guarantees.</div>
+    <div class="arch-container">
+      <div class="arch-flow anim d3">
+        <div class="arch-flow-node user-node"><span class="node-badge">Web</span> Next.js Dashboard</div>
+        <span class="arch-arrow">↕</span>
+        <div class="arch-flow-node">API Layer (Route Handlers)</div>
+        <span class="arch-arrow">↕</span>
+        <div class="arch-flow-node">Service Layer (Business Logic)</div>
+        <span class="arch-arrow">↕</span>
+        <div class="arch-flow-node">Supabase PostgreSQL</div>
+      </div>
+      <div class="arch-flow anim d4">
+        <div class="arch-flow-node user-node"><span class="node-badge">CLI</span> Commander.js (kiln)</div>
+        <span class="arch-arrow">↕</span>
+        <div class="arch-flow-node">Same API Layer</div>
+      </div>
+
+      <div class="arch-orch anim d5" style="padding:18px 24px;justify-content:flex-start;gap:24px">
+        <div style="flex:1">
+          <div class="arch-orch-name" style="font-size:14px;margin-bottom:2px">Key Architectural Patterns</div>
+          <div class="arch-orch-desc" style="max-width:none">Zod validation on every input • ServiceResult&lt;T&gt; pattern (data/error, no exceptions) • Org isolation at service layer • JSON skill manifests for agent discovery • SmartLead integration via n8n webhooks</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 4: AI Analyses ═══ -->
+  <div class="slide" data-label="AI Analyses">
+    <span class="slide-number">04</span>
+    <div class="slide-label anim">AI-Powered Competitive Intelligence</div>
+    <div class="slide-title anim d1">7 Gemini-powered analyses</div>
+    <div class="model-cards">
+      <div class="model-card anim-left d2">
+        <div class="model-card-role">Strategic Gap Analysis</div>
+        <div class="model-card-name gemini">Competitive Whitespace</div>
+        <div class="model-card-why">Identifies 3–5 strategic gaps in competitor positioning, ranked by impact. Includes execution ideas and confidence scores for each gap.</div>
+      </div>
+      <div class="model-card anim d3">
+        <div class="model-card-role">Synthesis</div>
+        <div class="model-card-name gemini">Strategic Recommendation</div>
+        <div class="model-card-why">Synthesizes all findings into one actionable best move. Shows reasoning and confidence level for the recommendation.</div>
+      </div>
+      <div class="model-card anim-right d4">
+        <div class="model-card-role">Creative Analysis</div>
+        <div class="model-card-name gemini">Competitor Ad Analysis</div>
+        <div class="model-card-why">Multimodal analysis of ad creatives. Identifies format mix, dominant CTAs, messaging themes, visual patterns.</div>
+      </div>
+      <div class="model-card anim-left d5">
+        <div class="model-card-role">Messaging Intelligence</div>
+        <div class="model-card-name gemini">Messaging Taxonomy</div>
+        <div class="model-card-why">Extracts dominant themes per competitor. Surfaces differentiation opportunities and positioning gaps.</div>
+      </div>
+      <div class="model-card anim d6">
+        <div class="model-card-role">Category Role</div>
+        <div class="model-card-name gemini">Brand Role Detection</div>
+        <div class="model-card-why">Identifies brand's category role: innovator, executor, defender, or consolidator. Includes confidence and supporting evidence.</div>
+      </div>
+      <div class="model-card anim-right d7">
+        <div class="model-card-role">Risk Mitigation</div>
+        <div class="model-card-name gemini">Goal Conflict Detection</div>
+        <div class="model-card-why">Flags contradictory messaging goals before they reach market. Prevents brand confusion and mixed signals.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 5: CLI & Agent Tooling ═══ -->
+  <div class="slide" data-label="CLI & Agents">
+    <span class="slide-number">05</span>
+    <div class="slide-label anim">17 Commands, Every One Agent-Ready</div>
+    <div class="slide-title anim d1">CLI as first-class citizen</div>
+    <div class="slide-subtitle anim d2" style="margin-bottom:32px">Agents discover capabilities via JSON skill manifests. Every command returns structured output for downstream processing.</div>
+
+    <div class="decision-list" style="max-width:100%;gap:16px">
+      <div class="decision-item anim-left d3" style="gap:16px">
+        <div class="decision-number" style="min-width:40px;font-size:14px">Auth</div>
+        <div><div class="decision-text" style="margin:0">login &nbsp;·&nbsp; logout &nbsp;·&nbsp; status</div></div>
+      </div>
+      <div class="decision-item anim-left d4" style="gap:16px">
+        <div class="decision-number" style="min-width:40px;font-size:14px">Core</div>
+        <div><div class="decision-text" style="margin:0">scrapes (list/get/create/delete) &nbsp;·&nbsp; leads (list/get) &nbsp;·&nbsp; automations (list/get/create/run)</div></div>
+      </div>
+      <div class="decision-item anim-left d5" style="gap:16px">
+        <div class="decision-number" style="min-width:40px;font-size:14px">Intel</div>
+        <div><div class="decision-text" style="margin:0">competitors &nbsp;·&nbsp; competitor-ads &nbsp;·&nbsp; whitespace &nbsp;·&nbsp; messaging-taxonomy &nbsp;·&nbsp; brand-role &nbsp;·&nbsp; strategic-recommendation</div></div>
+      </div>
+      <div class="decision-item anim-left d6" style="gap:16px">
+        <div class="decision-number" style="min-width:40px;font-size:14px">Safety</div>
+        <div><div class="decision-text" style="margin:0">guardrails &nbsp;·&nbsp; goal-conflicts</div></div>
+      </div>
+      <div class="decision-item anim-left d7" style="gap:16px">
+        <div class="decision-number" style="min-width:40px;font-size:14px">Outreach</div>
+        <div><div class="decision-text" style="margin:0">smartlead (status/sync)</div></div>
+      </div>
+    </div>
+
+    <div class="arch-orch anim d8" style="margin-top:32px;padding:18px 24px;justify-content:flex-start;gap:16px">
+      <div style="flex:1">
+        <div class="arch-orch-name" style="font-size:14px;margin-bottom:2px">Example Usage</div>
+        <div class="arch-orch-desc" style="max-width:none;font-family:'JetBrains Mono',monospace;font-size:11px">kiln whitespace analyze https://example.com --category "SaaS" --json</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 6: Design Decisions ═══ -->
+  <div class="slide" data-label="Design Decisions">
+    <span class="slide-number">06</span>
+    <div class="slide-label anim">Key Design Decisions</div>
+    <div class="slide-title anim d1">What shaped the architecture</div>
+    <div class="decision-list">
+      <div class="decision-item anim-left d2">
+        <div class="decision-number">01</div>
+        <div><div class="decision-title">CLI as equal citizen</div><div class="decision-text">Most platforms add an API later. Here the CLI and web UI both consume the same service layer — feature parity is architectural, not aspirational.</div></div>
+      </div>
+      <div class="decision-item anim-left d3">
+        <div class="decision-number">02</div>
+        <div><div class="decision-title">ServiceResult over exceptions</div><div class="decision-text">Every function returns { data, error }. Makes error paths explicit, eliminates try-catch chains, works identically across web and CLI.</div></div>
+      </div>
+      <div class="decision-item anim-left d4">
+        <div class="decision-number">03</div>
+        <div><div class="decision-title">Skill manifests for discovery</div><div class="decision-text">JSON manifests describe every command's parameters, output schema, and examples. Agents can plan before executing.</div></div>
+      </div>
+      <div class="decision-item anim-left d5">
+        <div class="decision-number">04</div>
+        <div><div class="decision-title">Org isolation at service layer</div><div class="decision-text">Every query includes org_id. No RLS dependency, no cross-tenant data leakage, auditable from a single point.</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Scroll animations ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+function initAnimations() {
+  document.querySelectorAll('.anim, .anim-left, .anim-right, .anim-scale, .anim-fade').forEach(el => observer.observe(el));
+}
+
+// ── Nav dots ──
+const slideEls = () => document.querySelectorAll('.slide');
+let activeSlide = 0;
+
+function renderDots() {
+  document.getElementById('navDots').innerHTML = Array.from({length: slideEls().length}, (_, i) =>
+    `<div class="nav-dot ${i===0?'active':''}" onclick="goToSlide(${i})" title="${slideEls()[i].dataset.label}"></div>`
+  ).join('');
+}
+
+function goToSlide(i) { slideEls()[i].scrollIntoView({ behavior:'smooth' }); }
+
+function updateActiveDot() {
+  const s = document.getElementById('slides');
+  const current = Math.round(s.scrollTop / window.innerHeight);
+  if (current !== activeSlide) {
+    activeSlide = current;
+    document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i===current));
+  }
+}
+
+document.getElementById('slides').addEventListener('scroll', updateActiveDot);
+
+document.addEventListener('keydown', e => {
+  const total = slideEls().length;
+  if (['ArrowDown',' ','ArrowRight'].includes(e.key)) { e.preventDefault(); if (activeSlide < total-1) goToSlide(activeSlide+1); }
+  if (['ArrowUp','ArrowLeft'].includes(e.key)) { e.preventDefault(); if (activeSlide > 0) goToSlide(activeSlide-1); }
+});
+
+renderDots();
+initAnimations();
+</script>
+
+<style>
+.cross-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(9,9,11,.92);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.cross-nav a{color:var(--text-dim);text-decoration:none;padding:4px 12px;border-radius:4px;border:1px solid transparent;transition:all .2s}
+.cross-nav a:hover{color:var(--green,#34d399);border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.05)}
+.cross-nav a.current{color:var(--green,#34d399);border-color:rgba(52,211,153,.3)}
+.cross-nav .sep{color:var(--text-dim);opacity:.3}
+.cross-nav .back{margin-right:auto;color:var(--text-dim);text-decoration:none;padding:4px 12px;border-radius:4px;border:1px solid transparent;transition:all .2s}
+.cross-nav .back:hover{color:var(--text-bright,#fafafa);border-color:var(--border)}
+</style>
+<div class="cross-nav">
+  <a class="back" href="../index.html#projects">&larr; Portfolio</a>
+  <a href="vmg-architecture.html">Brief Orchestrator</a>
+  <span class="sep">/</span>
+  <a href="atoll-architecture.html">Project Ops</a>
+  <span class="sep">/</span>
+  <a href="tools-platform.html">AI Tools Platform</a>
+  <span class="sep">/</span>
+  <a class="current">Lead Gen &amp; Intel</a>
+</div>
+</body>
+</html>

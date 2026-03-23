@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Atoll — Human-Agent Project Management</title>
+<title>Agent-Assisted Project Ops — VMG Digital</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
   *{margin:0;padding:0;box-sizing:border-box}
@@ -206,8 +206,8 @@
   <div class="slide title-slide" data-label="Title">
     <span class="slide-number">01</span>
     <div class="vmg-badge anim">VMG Digital &middot; Internal Tools</div>
-    <div class="title-main anim d1">Atoll</div>
-    <div class="title-desc anim d2">Project management where AI agents are first-class team members. One unified interface for humans and agents — web UI and CLI as equal citizens.</div>
+    <div class="title-main anim d1">Agent-Assisted Project Ops</div>
+    <div class="title-desc anim d2">Rethinking how our teams manage work alongside AI. Agents are first-class team members — one unified interface for humans and agents, web UI and CLI as equal citizens.</div>
     <div class="title-stats anim d3">
       <div><div class="title-stat-value">12</div><div class="title-stat-label">Build phases complete</div></div>
       <div><div class="title-stat-value">2</div><div class="title-stat-label">Interfaces (Web + CLI)</div></div>
@@ -222,7 +222,7 @@
     <span class="slide-number">02</span>
     <div class="slide-label anim">Background</div>
     <div class="slide-title anim d1">From tools to teammates</div>
-    <div class="slide-subtitle anim d2">We're turning VMG's internal software tools into <strong>CLI tools with accompanying skills</strong>. Agents need a place to pick up work, report progress, and collaborate with humans. That's Atoll.</div>
+    <div class="slide-subtitle anim d2">We're turning VMG's internal software tools into <strong>CLI tools with accompanying skills</strong>. Agents need a place to pick up work, report progress, and collaborate with humans. That's what this system does.</div>
     <div class="context-grid">
       <div class="context-card anim d3">
         <div class="context-card-icon">&#9881;</div>
@@ -426,7 +426,7 @@
         <div class="feature-card-badge both">Web + CLI</div>
         <div class="feature-card-icon">&#128232;</div>
         <div class="feature-card-title">Outbound Webhooks</div>
-        <div class="feature-card-text">HMAC-signed JSON payloads for platform events. Configure endpoints per org. Delivery engine with retry logic. Extend Atoll into any external workflow.</div>
+        <div class="feature-card-text">HMAC-signed JSON payloads for platform events. Configure endpoints per org. Delivery engine with retry logic. Extend the platform into any external workflow.</div>
       </div>
     </div>
   </div>
@@ -435,7 +435,7 @@
   <div class="slide" data-label="Agent Flow">
     <span class="slide-number">06</span>
     <div class="slide-label anim">How It Works</div>
-    <div class="slide-title anim d1">An agent's lifecycle in Atoll</div>
+    <div class="slide-title anim d1">An agent's lifecycle in the platform</div>
     <div class="slide-subtitle anim d2">From invitation to production. A single workflow for onboarding any AI agent as a team member.</div>
 
     <div class="collab-container">
@@ -452,7 +452,7 @@
           <div class="collab-step-num">02</div>
           <div>
             <div class="collab-step-title">Agent runs skill installer</div>
-            <div class="collab-step-text">One command configures the agent's local environment — installs the Atoll CLI, sets up API key auth, and provides org context. Agent is ready to work.</div>
+            <div class="collab-step-text">One command configures the agent's local environment — installs the project CLI, sets up API key auth, and provides org context. Agent is ready to work.</div>
             <div class="collab-step-tags"><span class="collab-tag agent">Agent action</span><span class="collab-tag system">Automated</span></div>
           </div>
         </div>
@@ -492,7 +492,7 @@
     <div class="decision-list">
       <div class="decision-item anim-left d2">
         <div class="decision-number">01</div>
-        <div><div class="decision-title">CLI as equal citizen, not afterthought</div><div class="decision-text">Most project management tools add an API later. Atoll's CLI and web UI both consume the <strong>same Data Access Layer</strong> — feature parity is enforced by architecture, not policy. If it exists in the web UI, it exists in the CLI.</div></div>
+        <div><div class="decision-title">CLI as equal citizen, not afterthought</div><div class="decision-text">Most project management tools add an API later. The CLI and web UI both consume the <strong>same Data Access Layer</strong> — feature parity is enforced by architecture, not policy. If it exists in the web UI, it exists in the CLI.</div></div>
       </div>
       <div class="decision-item anim-left d3">
         <div class="decision-number">02</div>
@@ -500,7 +500,7 @@
       </div>
       <div class="decision-item anim-left d4">
         <div class="decision-number">03</div>
-        <div><div class="decision-title">Agent-agnostic by design</div><div class="decision-text">Atoll doesn't couple to any specific agent platform. The CLI is the universal interface — <strong>any agent that can run shell commands can use Atoll</strong>. Skill installers handle platform-specific config (Claude Code, Codex, Gemini CLI, OpenClaw).</div></div>
+        <div><div class="decision-title">Agent-agnostic by design</div><div class="decision-text">The system doesn't couple to any specific agent framework. The CLI is the universal interface — <strong>any agent that can run shell commands can use it</strong>. Skill installers handle platform-specific config (Claude Code, Codex, Gemini CLI, OpenClaw).</div></div>
       </div>
       <div class="decision-item anim-left d5">
         <div class="decision-number">04</div>
@@ -614,5 +614,25 @@ renderPhases();
 renderDots();
 initAnimations();
 </script>
+
+<style>
+.cross-nav{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(9,9,11,.92);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:11px}
+.cross-nav a{color:var(--text-dim);text-decoration:none;padding:4px 12px;border-radius:4px;border:1px solid transparent;transition:all .2s}
+.cross-nav a:hover{color:var(--green,#34d399);border-color:rgba(52,211,153,.3);background:rgba(52,211,153,.05)}
+.cross-nav a.current{color:var(--green,#34d399);border-color:rgba(52,211,153,.3)}
+.cross-nav .sep{color:var(--text-dim);opacity:.3}
+.cross-nav .back{margin-right:auto;color:var(--text-dim);text-decoration:none;padding:4px 12px;border-radius:4px;border:1px solid transparent;transition:all .2s}
+.cross-nav .back:hover{color:var(--text-bright,#fafafa);border-color:var(--border)}
+</style>
+<div class="cross-nav">
+  <a class="back" href="../index.html#projects">&larr; Portfolio</a>
+  <a href="vmg-architecture.html">Brief Orchestrator</a>
+  <span class="sep">/</span>
+  <a class="current">Project Ops</a>
+  <span class="sep">/</span>
+  <a href="tools-platform.html">AI Tools Platform</a>
+  <span class="sep">/</span>
+  <a href="lead-gen-intel.html">Lead Gen &amp; Intel</a>
+</div>
 </body>
 </html>

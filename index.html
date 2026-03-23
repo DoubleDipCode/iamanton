@@ -609,7 +609,7 @@
       <a href="#hero">home</a>
       <a href="#about">about</a>
       <a href="#experience">experience</a>
-      <a href="#agents">kraken</a>
+      <a href="#agents">agents</a>
       <a href="#sierra">sierra</a>
       <a href="#projects">projects</a>
     </div>
@@ -631,7 +631,7 @@
       <div class="line">&nbsp;&nbsp;<span class="key">"name"</span>: <span class="str">"Anton Eliasson"</span>,</div>
       <div class="line">&nbsp;&nbsp;<span class="key">"role"</span>: <span class="str">"Strategist & Agent Builder"</span>,</div>
       <div class="line">&nbsp;&nbsp;<span class="key">"location"</span>: <span class="str">"Singapore"</span>,</div>
-      <div class="line">&nbsp;&nbsp;<span class="key">"building"</span>: <span class="str">"Kraken — multi-agent orchestration system"</span>,</div>
+      <div class="line">&nbsp;&nbsp;<span class="key">"building"</span>: <span class="str">"multi-agent systems for creative strategy"</span>,</div>
       <div class="line">&nbsp;&nbsp;<span class="key">"background"</span>: [<span class="str">"Co-founder (9yr)"</span>, <span class="str">"CSO"</span>, <span class="str">"Enterprise partnerships"</span>]</div>
       <div class="line">}<span class="cursor"></span></div>
     </div>
@@ -657,7 +657,7 @@
     </div>
     <div class="about-card" data-anim>
       <h3>What I do now</h3>
-      <p>Director of AI & Automation at VMG Digital, serving 40-50 people across multiple teams. Built "Kraken" — a multi-agent orchestration system (1 orchestrator + 11 specialized sub-agents) — and established AI pods across 4 departments. Now commercializing internal AI tools into external products.</p>
+      <p>Director of AI & Automation at VMG Digital, serving 40-50 people across multiple teams. Built a multi-agent orchestration system (1 orchestrator + 11 specialized sub-agents) for creative strategy, an AI tools platform with 12 internal tools, and established AI pods across 4 departments.</p>
     </div>
     <div class="about-card" data-anim>
       <h3>How I think</h3>
@@ -681,7 +681,7 @@
       <div class="timeline-role">Director of AI & Automation</div>
       <div class="timeline-company">VMG Digital &middot; Singapore</div>
       <div class="timeline-desc">
-        Built VMG's AI function from the ground up, serving 40-50 people across multiple teams. Designed and deployed "Kraken" — a multi-agent orchestration system with 1 orchestrator + 11 specialized sub-agents, each powered by task-matched LLMs (Gemini 2.5 Flash, GPT-5.4, Grok 4.1 Fast). Also built an AI-powered LinkedIn ads analysis platform using multimodal LLMs. Established AI pods across 4 departments (7 people total). Now leading commercialization of internal AI tools into external-facing products.
+        Built VMG's AI function from the ground up, serving 40-50 people across multiple teams. Designed and deployed a multi-agent orchestration system with 1 orchestrator + 11 specialized sub-agents, each powered by task-matched LLMs (Gemini 2.5 Flash, GPT-5.4, Grok 4.1 Fast). Built an internal AI tools platform (12 tools), an AI-powered LinkedIn ads analysis platform, and a lead generation system with CLI tooling for agent automation. Established AI pods across 4 departments (7 people total).
       </div>
       <div class="timeline-tags">
         <span class="tag">Multi-agent orchestration</span>
@@ -744,11 +744,11 @@
 
 <!-- ═══ KRAKEN — AGENT ARCHITECTURE ═══ -->
 <section id="agents">
-  <div class="section-label">// kraken</div>
-  <h2>What I Built: Kraken</h2>
+  <div class="section-label">// agent architecture</div>
+  <h2>What I Built: Creative Brief Orchestrator</h2>
   <div class="diagram-container" data-anim>
     <div class="diagram-intro">
-      Kraken is a production multi-agent creative brief orchestrator I designed and deployed at VMG. One orchestrator agent (GPT-5.4) coordinates 11 specialized sub-agents (all on Grok 4.1 Fast), with Gemini 2.5 Flash handling multimodal PDF ingestion. The system transforms raw client briefs into structured campaign strategy through three phases: foundation & audience analysis, strategy synthesis, and creative development.
+      A production multi-agent system I designed and deployed at VMG to solve our brief quality problem. One orchestrator agent (GPT-5.4) coordinates 11 specialized sub-agents (all on Grok 4.1 Fast), with Gemini 2.5 Flash handling multimodal PDF ingestion. The system transforms raw client briefs into structured campaign strategy through three phases: foundation & audience analysis, strategy synthesis, and creative development.
     </div>
     <div class="diagram-wrapper">
       <div class="diagram-svg-wrap">
@@ -1314,8 +1314,16 @@
       fname: 'atoll-architecture.html',
       src: 'Presentation/atoll-architecture.html',
     },
-    toolportal: { type: 'detail', panelId: 'detailToolportal' },
-    agentgtm: { type: 'detail', panelId: 'detailAgentgtm' },
+    toolportal: {
+      type: 'iframe',
+      fname: 'tools-platform.html',
+      src: 'Presentation/tools-platform.html',
+    },
+    agentgtm: {
+      type: 'iframe',
+      fname: 'lead-gen-intel.html',
+      src: 'Presentation/lead-gen-intel.html',
+    },
   };
 
   function showProject(key) {
