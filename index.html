@@ -285,9 +285,53 @@
   }
   .thesis-box.visible { opacity: 1; transform: translateY(0); }
 
-  /* ── PRESENTATION ── */
+  /* ── PROJECTS ── */
+  .projects-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px; margin-top: 20px;
+  }
+  .project-card {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 8px; padding: 24px; cursor: pointer;
+    opacity: 0; transform: translateY(20px); transition: all 0.4s ease;
+    position: relative; overflow: hidden;
+  }
+  .project-card.visible { opacity: 1; transform: translateY(0); }
+  .project-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .project-card:hover { border-color: var(--green-dim); transform: translateY(-2px); }
+  .project-card:hover::before { opacity: 1; }
+  .project-card.active { border-color: var(--green); }
+  .project-card.active::before { opacity: 1; }
+  .project-card .project-type {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+    color: var(--green); margin-bottom: 10px; font-weight: 600;
+  }
+  .project-card h3 {
+    color: var(--text-bright); font-size: 16px; font-weight: 600;
+    margin-bottom: 8px; font-family: var(--font-mono);
+  }
+  .project-card .project-desc {
+    color: var(--text); font-family: var(--font-sans); font-size: 13px;
+    line-height: 1.6; margin-bottom: 14px;
+  }
+  .project-card .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .project-card .project-tag {
+    font-size: 10px; padding: 2px 8px; border-radius: 3px;
+    border: 1px solid var(--border); color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  .project-viewer {
+    margin-top: 28px; opacity: 0; transform: translateY(20px); transition: all 0.5s ease;
+  }
+  .project-viewer.visible { opacity: 1; transform: translateY(0); }
+
   .pres-embed-wrap {
-    margin-top: 20px; opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
+    margin-top: 0; opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
   }
   .pres-embed-wrap.visible { opacity: 1; transform: translateY(0); }
   .pres-frame-container {
@@ -416,6 +460,7 @@
     nav .nav-links a { font-size: 11px; padding: 4px 8px; }
     .diagram-wrapper { padding: 20px; }
     .pres-iframe { height: 50vh; }
+    .projects-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -431,20 +476,20 @@
 
   const eggs = {
     hiopenai:     { msg: "Nope. Though their model does power my orchestrator.", next: "hianthropic" },
-    hianthropic:  { msg: "Close. They built the model I used to build this site. But I\u2019m trying to work at Sierra.", next: "higoogle" },
-    higoogle:     { msg: "Not quite. But you\u2019re getting warmer.", next: "himeta" },
+    hianthropic:  { msg: "No. I do pay them $200/mo for Claude Code though\u2026", next: "himeta" },
     himeta:       { msg: "I spent 9 years working with Meta. But this site isn\u2019t for them.", next: "himistral" },
-    himistral:    { msg: "Non.", next: "hicohere" },
-    hicohere:     { msg: "You\u2019re really going through the list, aren\u2019t you?", next: "hisalesforce" },
+    himistral:    { msg: "Non.", next: "himicrosoft" },
+    himicrosoft:  { msg: "No. But I\u2019m sure you\u2019ll run into them soon enough.", next: "higoogle" },
+    higoogle:     { msg: "Getting warmer. But no.", next: "hitwilio" },
+    hitwilio:     { msg: "Warm. But not quite.", next: "hisalesforce" },
     hisalesforce: { msg: "No, but I hear they keep coming up in your pipeline reviews.", next: "hiintercom" },
-    hiintercom:   { msg: "Fin is cool. But I\u2019m more interested in what Sierra\u2019s building.", next: "hiada" },
-    hiada:        { msg: "Now you\u2019re just going through competitors.", next: "hizendesk" },
-    hizendesk:    { msg: "Getting colder.", next: "hipalantir" },
-    hipalantir:   { msg: "No. Though I hear you keep poaching each other\u2019s people.", next: "hitwilio" },
-    hitwilio:     { msg: "Warm. But not quite.", next: "himicrosoft" },
-    himicrosoft:  { msg: "Try a few more subdomains. You\u2019ll get there eventually.", next: "hiperplexity" },
+    hiintercom:   { msg: "Fin is cool. But I\u2019m more interested in what Sierra\u2019s building.", next: "hipalantir" },
+    hipalantir:   { msg: "No. Though I hear you keep poaching each other\u2019s people.", next: "hiperplexity" },
     hiperplexity: { msg: "Good product. But no.", next: "hiadobe" },
-    hiadobe:      { msg: "No.", next: "hisierra" }
+    hiadobe:      { msg: "No.", next: "hicohere" },
+    hicohere:     { msg: "You\u2019re really going through the list, aren\u2019t you?", next: "hiada" },
+    hiada:        { msg: "Now you\u2019re just going through competitors.", next: "hizendesk" },
+    hizendesk:    { msg: "Getting colder. Try a few more subdomains.", next: "hisierra" }
   };
 
   const domain = parts.slice(1).join('.');
@@ -456,9 +501,8 @@
     nextSub = entry.next;
   } else {
     msg = "Yes, I made this just for Sierra. No, there isn\u2019t one for anyone else. You can stop checking.";
-    // Pick a random entry point for unknown subdomains
-    const keys = Object.keys(eggs);
-    nextSub = keys[Math.floor(Math.random() * keys.length)];
+    // Unknown subdomains always start at the beginning of the chain
+    nextSub = 'hiopenai';
   }
 
   const nextUrl = domain
@@ -516,7 +560,7 @@
       <a href="#experience">experience</a>
       <a href="#agents">kraken</a>
       <a href="#sierra">sierra</a>
-      <a href="#presentation">deck</a>
+      <a href="#projects">projects</a>
     </div>
   </div>
 </nav>
@@ -904,23 +948,50 @@
 </section>
 
 <!-- ═══ PRESENTATION ═══ -->
-<section id="presentation" style="min-height: auto; padding-bottom: 40px;">
-  <div class="section-label">// presentation</div>
-  <h2>Kraken — Full Presentation</h2>
-  <div class="pres-embed-wrap" data-anim>
-    <div class="pres-frame-container">
-      <div class="pres-frame-bar">
-        <div class="title-area">
-          <div class="dots">
-            <div class="dot" style="background:#f07178"></div>
-            <div class="dot" style="background:#ffb454"></div>
-            <div class="dot" style="background:#00e599"></div>
-          </div>
-          <span class="fname">vmg-architecture.html</span>
-        </div>
-        <a class="open-link" href="Presentation/vmg-architecture.html" target="_blank">Open in new tab &rarr;</a>
+<section id="projects" style="min-height: auto; padding-bottom: 40px;">
+  <div class="section-label">// projects</div>
+  <h2>Selected Work</h2>
+
+  <div class="projects-grid">
+    <div class="project-card" data-anim data-project="kraken" onclick="showProject('kraken')">
+      <div class="project-type">Multi-Agent System</div>
+      <h3>Kraken</h3>
+      <p class="project-desc">Production multi-agent orchestration system: 1 orchestrator + 11 specialized sub-agents transforming unstructured client briefs into structured creative strategy.</p>
+      <div class="project-tags">
+        <span class="project-tag">LLM orchestration</span>
+        <span class="project-tag">11 agents</span>
+        <span class="project-tag">production</span>
       </div>
-      <iframe class="pres-iframe" src="Presentation/vmg-architecture.html" loading="lazy"></iframe>
+    </div>
+
+    <div class="project-card" data-anim data-project="atoll" onclick="showProject('atoll')">
+      <div class="project-type">Product Architecture</div>
+      <h3>Atoll</h3>
+      <p class="project-desc">Human-agent project management platform where AI agents are first-class collaborators — handling research, drafting, and execution alongside human teammates.</p>
+      <div class="project-tags">
+        <span class="project-tag">human-agent loops</span>
+        <span class="project-tag">task orchestration</span>
+        <span class="project-tag">product design</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="project-viewer" id="projectViewer">
+    <div class="pres-embed-wrap visible" id="projectEmbed">
+      <div class="pres-frame-container">
+        <div class="pres-frame-bar">
+          <div class="title-area">
+            <div class="dots">
+              <div class="dot" style="background:#f07178"></div>
+              <div class="dot" style="background:#ffb454"></div>
+              <div class="dot" style="background:#00e599"></div>
+            </div>
+            <span class="fname" id="projectFname">vmg-architecture.html</span>
+          </div>
+          <a class="open-link" id="projectOpenLink" href="Presentation/vmg-architecture.html" target="_blank">Open in new tab &rarr;</a>
+        </div>
+        <iframe class="pres-iframe" id="projectIframe" src="" loading="lazy"></iframe>
+      </div>
     </div>
   </div>
 </section>
@@ -957,7 +1028,7 @@
     });
   }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
 
-  document.querySelectorAll('[data-anim], .section-label, h2, .about-card, .stat, .timeline-item, .fit-card, .diagram-container, .pres-embed-wrap, .thesis-box').forEach(el => {
+  document.querySelectorAll('[data-anim], .section-label, h2, .about-card, .stat, .timeline-item, .fit-card, .diagram-container, .pres-embed-wrap, .thesis-box, .project-card').forEach(el => {
     observer.observe(el);
   });
 
@@ -1035,6 +1106,44 @@
       openAgentModal(parseInt(node.dataset.agent));
     });
   });
+
+  // ── Project switching ──
+  const projects = {
+    kraken: {
+      fname: 'vmg-architecture.html',
+      src: 'Presentation/vmg-architecture.html',
+    },
+    atoll: {
+      fname: 'atoll-architecture.html',
+      src: 'Presentation/atoll-architecture.html',
+    }
+  };
+
+  function showProject(key) {
+    const proj = projects[key];
+    if (!proj) return;
+
+    const viewer = document.getElementById('projectViewer');
+    const iframe = document.getElementById('projectIframe');
+    const fname = document.getElementById('projectFname');
+    const openLink = document.getElementById('projectOpenLink');
+
+    // Update active card
+    document.querySelectorAll('.project-card').forEach(c => c.classList.remove('active'));
+    const activeCard = document.querySelector(`.project-card[data-project="${key}"]`);
+    if (activeCard) activeCard.classList.add('active');
+
+    // Show viewer
+    viewer.classList.add('visible');
+
+    // Update iframe
+    fname.textContent = proj.fname;
+    openLink.href = proj.src;
+    iframe.src = proj.src;
+
+    // Scroll viewer into view
+    setTimeout(() => viewer.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  }
 </script>
 
 </body>
