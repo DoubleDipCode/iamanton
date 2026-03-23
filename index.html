@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anton Eliasson — Strategist & Agent Builder</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0e14;
+    --bg-raised: #111820;
+    --bg-card: #151d28;
+    --green: #00e599;
+    --green-dim: #00e59940;
+    --amber: #ffb454;
+    --blue: #53bdfa;
+    --purple: #c79bf2;
+    --red: #f07178;
+    --cyan: #22d3ee;
+    --text: #d4d4d8;
+    --text-dim: #6b7280;
+    --text-bright: #f4f4f5;
+    --border: #1e2a3a;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --font-sans: 'Inter', -apple-system, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--green-dim) var(--bg); }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--green); color: var(--bg); }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    background: rgba(10, 14, 20, 0.88);
+  }
+  nav .nav-inner {
+    max-width: 1100px; margin: 0 auto; padding: 12px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  nav .prompt { color: var(--green); font-weight: 600; font-size: 13px; }
+  nav .nav-links { display: flex; gap: 6px; }
+  nav .nav-links a {
+    color: var(--text-dim); text-decoration: none; font-size: 12px;
+    padding: 4px 12px; border-radius: 4px; transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  nav .nav-links a:hover, nav .nav-links a.active {
+    color: var(--green); border-color: var(--green-dim);
+    background: rgba(0, 229, 153, 0.05);
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    min-height: 100vh; padding: 120px 32px 80px;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .section-label {
+    color: var(--green); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 3px; margin-bottom: 12px;
+    opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
+  }
+  .section-label.visible { opacity: 1; transform: translateY(0); }
+
+  h2 {
+    font-family: var(--font-mono); color: var(--text-bright);
+    font-size: 28px; font-weight: 600; margin-bottom: 40px;
+    opacity: 0; transform: translateY(20px); transition: all 0.6s ease 0.1s;
+  }
+  h2.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── HERO ── */
+  #hero {
+    display: flex; flex-direction: column; justify-content: center;
+    align-items: flex-start; min-height: 100vh; padding-top: 60px;
+  }
+  .terminal-window {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 8px; width: 100%; max-width: 720px; overflow: hidden;
+    opacity: 0; transform: translateY(30px); animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+  .terminal-bar {
+    background: var(--bg-card); padding: 10px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .terminal-dot.red { background: #f07178; }
+  .terminal-dot.yellow { background: #ffb454; }
+  .terminal-dot.green { background: #00e599; }
+  .terminal-bar span { color: var(--text-dim); font-size: 11px; margin-left: 8px; }
+
+  .terminal-body { padding: 24px; font-size: 14px; line-height: 1.8; }
+  .terminal-body .line { opacity: 0; animation: typeLine 0.4s ease forwards; }
+  .terminal-body .line:nth-child(1) { animation-delay: 0.8s; }
+  .terminal-body .line:nth-child(2) { animation-delay: 1.1s; }
+  .terminal-body .line:nth-child(3) { animation-delay: 1.4s; }
+  .terminal-body .line:nth-child(4) { animation-delay: 1.7s; }
+  .terminal-body .line:nth-child(5) { animation-delay: 2.0s; }
+  .terminal-body .line:nth-child(6) { animation-delay: 2.3s; }
+  .terminal-body .line:nth-child(7) { animation-delay: 2.6s; }
+  .terminal-body .line:nth-child(8) { animation-delay: 2.9s; }
+
+  .prompt-char { color: var(--green); }
+  .key { color: var(--blue); }
+  .val { color: var(--amber); }
+  .str { color: var(--green); }
+  .comment { color: var(--text-dim); font-style: italic; }
+  .keyword { color: var(--purple); }
+  .num { color: var(--red); }
+  .cursor {
+    display: inline-block; width: 8px; height: 16px; background: var(--green);
+    margin-left: 2px; vertical-align: text-bottom; animation: blink 1s step-end infinite;
+  }
+
+  .hero-subtitle {
+    margin-top: 32px; color: var(--text-dim); font-size: 13px;
+    opacity: 0; animation: fadeUp 0.6s ease 3.4s forwards;
+  }
+  .hero-subtitle .val { color: var(--amber); }
+
+  .scroll-hint {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    color: var(--text-dim); font-size: 11px;
+    opacity: 0; animation: fadeUp 0.6s ease 3.8s forwards;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .scroll-hint .arrow {
+    width: 1px; height: 24px;
+    background: linear-gradient(to bottom, var(--green), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
+  .about-card {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 8px; padding: 28px;
+    opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
+  }
+  .about-card.visible { opacity: 1; transform: translateY(0); }
+  .about-card:hover { border-color: var(--green-dim); }
+  .about-card h3 {
+    color: var(--green); font-size: 12px; text-transform: uppercase;
+    letter-spacing: 2px; margin-bottom: 16px;
+  }
+  .about-card p { color: var(--text); font-family: var(--font-sans); font-size: 14px; line-height: 1.7; }
+
+  .stat-row { display: flex; gap: 32px; margin-top: 40px; }
+  .stat { opacity: 0; transform: translateY(20px); transition: all 0.6s ease; }
+  .stat.visible { opacity: 1; transform: translateY(0); }
+  .stat .num-val { font-size: 36px; font-weight: 700; color: var(--green); line-height: 1; }
+  .stat .label { color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; margin-top: 6px; }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 40px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 1px; background: linear-gradient(to bottom, var(--green), var(--green-dim), transparent);
+  }
+  .timeline-item {
+    position: relative; margin-bottom: 48px;
+    opacity: 0; transform: translateX(-20px); transition: all 0.6s ease;
+  }
+  .timeline-item.visible { opacity: 1; transform: translateX(0); }
+  .timeline-item::before {
+    content: ''; position: absolute; left: -44px; top: 6px;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 12px var(--green-dim);
+  }
+  .timeline-item.current::before { animation: pulse 2s ease infinite; }
+  .timeline-date { color: var(--green); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .timeline-role { color: var(--text-bright); font-size: 18px; font-weight: 600; margin-bottom: 2px; }
+  .timeline-company { color: var(--amber); font-size: 14px; margin-bottom: 12px; }
+  .timeline-desc { color: var(--text); font-family: var(--font-sans); font-size: 13px; line-height: 1.7; max-width: 640px; }
+  .timeline-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .tag {
+    font-size: 11px; padding: 3px 10px; border-radius: 3px;
+    border: 1px solid var(--border); color: var(--text-dim); transition: all 0.2s;
+  }
+  .tag:hover { border-color: var(--green-dim); color: var(--green); }
+
+  .prev-roles {
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .prev-roles .prev-role {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 4px 0; font-size: 12px;
+  }
+  .prev-roles .prev-role .title { color: var(--text); }
+  .prev-roles .prev-role .year { color: var(--text-dim); font-size: 11px; }
+
+  /* ── AGENT SECTION ── */
+  .diagram-container {
+    margin-top: 20px; opacity: 0; transform: translateY(20px); transition: all 0.8s ease;
+  }
+  .diagram-container.visible { opacity: 1; transform: translateY(0); }
+  .diagram-intro {
+    font-family: var(--font-sans); font-size: 14px; color: var(--text);
+    line-height: 1.7; max-width: 700px; margin-bottom: 40px;
+  }
+  .diagram-wrapper {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 8px; padding: 40px; overflow-x: auto;
+  }
+  .diagram-svg-wrap { display: flex; justify-content: center; }
+  .agent-diagram { width: 100%; max-width: 900px; height: auto; }
+  .agent-diagram text { font-family: 'JetBrains Mono', monospace; }
+  .agent-node { transition: all 0.3s ease; cursor: default; }
+  .agent-node:hover rect { filter: brightness(1.3); stroke-width: 2; }
+  .data-flow { stroke-dasharray: 6 4; animation: flowDash 1.5s linear infinite; }
+  @keyframes flowDash { to { stroke-dashoffset: -20; } }
+
+  .diagram-legend { display: flex; gap: 24px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-dim); }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .principles-grid { margin-top: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .principle {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 6px; padding: 20px;
+  }
+  .principle .p-label { color: var(--green); font-size: 11px; letter-spacing: 1px; margin-bottom: 8px; }
+  .principle .p-title { color: var(--text-bright); font-size: 13px; margin-bottom: 6px; font-weight: 500; }
+  .principle .p-text { color: var(--text); font-family: var(--font-sans); font-size: 12px; line-height: 1.6; }
+
+  /* Launch button */
+  .launch-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 28px; padding: 14px 28px;
+    background: linear-gradient(135deg, rgba(0,229,153,0.12), rgba(83,189,250,0.08));
+    border: 1px solid var(--green); border-radius: 8px;
+    color: var(--green); font-family: var(--font-mono); font-size: 14px; font-weight: 600;
+    text-decoration: none; transition: all 0.3s;
+    cursor: pointer;
+  }
+  .launch-btn:hover {
+    background: linear-gradient(135deg, rgba(0,229,153,0.2), rgba(83,189,250,0.12));
+    box-shadow: 0 0 24px rgba(0,229,153,0.15);
+    transform: translateY(-1px);
+  }
+  .launch-btn .arrow { transition: transform 0.2s; }
+  .launch-btn:hover .arrow { transform: translateX(4px); }
+
+  /* ── SIERRA FIT ── */
+  .fit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
+  .fit-card {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 8px; padding: 28px;
+    opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
+    position: relative; overflow: hidden;
+  }
+  .fit-card.visible { opacity: 1; transform: translateY(0); }
+  .fit-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--blue));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .fit-card:hover::before { opacity: 1; }
+  .fit-card h3 {
+    color: var(--text-bright); font-size: 15px; font-weight: 600;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .fit-card h3 .icon { color: var(--green); font-size: 16px; }
+  .fit-card p { font-family: var(--font-sans); font-size: 13px; color: var(--text); line-height: 1.7; }
+
+  .thesis-box {
+    margin-top: 40px; background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 8px; padding: 28px;
+    opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
+  }
+  .thesis-box.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── PRESENTATION ── */
+  .pres-embed-wrap {
+    margin-top: 20px; opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
+  }
+  .pres-embed-wrap.visible { opacity: 1; transform: translateY(0); }
+  .pres-frame-container {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden;
+  }
+  .pres-frame-bar {
+    padding: 10px 16px; background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .pres-frame-bar .title-area { display: flex; align-items: center; gap: 10px; }
+  .pres-frame-bar .dots { display: flex; gap: 6px; }
+  .pres-frame-bar .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .pres-frame-bar .fname { color: var(--text-dim); font-size: 11px; }
+  .pres-frame-bar .open-link {
+    color: var(--green); font-size: 11px; text-decoration: none;
+    border: 1px solid var(--green-dim); padding: 3px 10px; border-radius: 4px;
+    transition: all 0.2s;
+  }
+  .pres-frame-bar .open-link:hover { background: rgba(0,229,153,0.1); }
+  .pres-iframe {
+    width: 100%; height: 70vh; border: none; background: #09090b;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 40px 32px;
+    border-top: 1px solid var(--border); color: var(--text-dim); font-size: 11px;
+  }
+  footer a { color: var(--green); text-decoration: none; }
+
+  /* ── AGENT MODAL ── */
+  .agent-modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  }
+  .agent-modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .agent-modal {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 10px; padding: 32px; max-width: 480px; width: 90%;
+    transform: translateY(24px) scale(0.96);
+    transition: transform 0.3s cubic-bezier(.16,1,.3,1);
+    position: relative;
+  }
+  .agent-modal-overlay.open .agent-modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .agent-modal-close {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; color: var(--text-dim);
+    font-size: 18px; cursor: pointer; padding: 4px 8px; border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .agent-modal-close:hover { color: var(--text-bright); background: var(--bg-card); }
+
+  .agent-modal .modal-step {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--green); letter-spacing: 1px; margin-bottom: 4px;
+  }
+  .agent-modal .modal-name {
+    font-size: 20px; font-weight: 600; color: var(--text-bright); margin-bottom: 14px;
+  }
+  .agent-modal .modal-desc {
+    font-family: var(--font-sans); font-size: 13px;
+    color: var(--text); line-height: 1.7; margin-bottom: 18px;
+  }
+  .agent-modal .modal-meta {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;
+  }
+  .agent-modal .modal-tag {
+    font-size: 10px; padding: 3px 8px; border-radius: 3px;
+    border: 1px solid var(--border); color: var(--text-dim);
+  }
+  .agent-modal .modal-mode {
+    font-family: var(--font-mono); font-size: 11px;
+    padding: 6px 12px; border-radius: 5px; display: inline-block;
+  }
+  .agent-modal .modal-mode.auto { color: #34d399; background: rgba(52,211,153,0.1); }
+  .agent-modal .modal-mode.review { color: #c79bf2; background: rgba(167,139,250,0.1); }
+  .agent-modal .modal-mode.select { color: #c79bf2; background: rgba(167,139,250,0.1); }
+  .agent-modal .modal-mode.approve { color: #f07178; background: rgba(240,113,120,0.1); }
+
+  .agent-modal .modal-tools {
+    margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border);
+  }
+  .agent-modal .modal-tools-label {
+    font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-dim); margin-bottom: 6px;
+  }
+  .agent-modal .modal-tools-list {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .agent-modal .tool-chip {
+    font-family: var(--font-mono); font-size: 10px;
+    padding: 2px 8px; border-radius: 3px;
+    background: rgba(34,211,238,0.08); color: var(--cyan);
+  }
+
+  .agent-node { cursor: pointer; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  @keyframes typeLine { to { opacity: 1; } }
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 4px var(--green-dim); }
+    50% { box-shadow: 0 0 16px var(--green); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 0.8; transform: scaleY(1.3); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    section { padding: 100px 20px 60px; }
+    .about-grid, .fit-grid, .principles-grid { grid-template-columns: 1fr; }
+    .stat-row { flex-wrap: wrap; gap: 20px; }
+    .terminal-body { padding: 16px; font-size: 12px; }
+    h2 { font-size: 22px; }
+    nav .nav-links a { font-size: 11px; padding: 4px 8px; }
+    .diagram-wrapper { padding: 20px; }
+    .pres-iframe { height: 50vh; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <div class="nav-inner">
+    <div class="prompt">~/anton $</div>
+    <div class="nav-links">
+      <a href="#hero">home</a>
+      <a href="#about">about</a>
+      <a href="#experience">experience</a>
+      <a href="#agents">kraken</a>
+      <a href="#sierra">sierra</a>
+      <a href="#presentation">deck</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="terminal-window">
+    <div class="terminal-bar">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span>anton@portfolio ~ </span>
+    </div>
+    <div class="terminal-body">
+      <div class="line"><span class="prompt-char">$</span> cat profile.json</div>
+      <div class="line">{</div>
+      <div class="line">&nbsp;&nbsp;<span class="key">"name"</span>: <span class="str">"Anton Eliasson"</span>,</div>
+      <div class="line">&nbsp;&nbsp;<span class="key">"role"</span>: <span class="str">"Strategist & Agent Builder"</span>,</div>
+      <div class="line">&nbsp;&nbsp;<span class="key">"location"</span>: <span class="str">"Singapore"</span>,</div>
+      <div class="line">&nbsp;&nbsp;<span class="key">"building"</span>: <span class="str">"Kraken — multi-agent orchestration system"</span>,</div>
+      <div class="line">&nbsp;&nbsp;<span class="key">"background"</span>: [<span class="str">"Co-founder (9yr)"</span>, <span class="str">"CSO"</span>, <span class="str">"Enterprise partnerships"</span>]</div>
+      <div class="line">}<span class="cursor"></span></div>
+    </div>
+  </div>
+  <p class="hero-subtitle">
+    Co-founded Shakr (ad-tech, acquired 2024). Now building AI agent systems as Director of AI &amp; Automation at <span class="val">VMG Digital</span>.<br>
+    Swedish &middot; English &amp; Swedish native, Korean conversational &middot; APAC, NA, EMEA experience.
+  </p>
+  <div class="scroll-hint">
+    <span>scroll</span>
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ═══ -->
+<section id="about">
+  <div class="section-label">// about</div>
+  <h2>Background</h2>
+  <div class="about-grid">
+    <div class="about-card" data-anim>
+      <h3>The short version</h3>
+      <p>Swedish, based in Singapore. Co-founded Shakr — an ad-tech platform that generated video ads at scale for the world's largest brands and agencies. Grew it over 9 years as CSO, driving enterprise partnerships with Meta, TikTok, and global agencies. Shakr was acquired in 2024 by Shuttlerock.</p>
+    </div>
+    <div class="about-card" data-anim>
+      <h3>What I do now</h3>
+      <p>Director of AI & Automation at VMG Digital, serving 40-50 people across multiple teams. Built "Kraken" — a multi-agent orchestration system (1 orchestrator + 11 specialized sub-agents) — and established AI pods across 4 departments. Now commercializing internal AI tools into external products.</p>
+    </div>
+    <div class="about-card" data-anim>
+      <h3>How I think</h3>
+      <p>At VMG, strategists kept saying the briefs were bad. The obvious fix is a better template. But the real issue was that nobody had defined what a brief needs to become before it's actually useful — so I broke that down into 11 steps and built agents for each one. At Shakr, same instinct: we needed revenue, so instead of hiring more salespeople I got Meta to recommend us to their clients directly. I fixate on the problem behind the problem.</p>
+    </div>
+    <div class="about-card" data-anim>
+      <h3>Enterprise DNA</h3>
+      <p>Direct relationships with Meta (largest revenue driver at Shakr), closed a 7-figure licensing deal with TikTok, worked with Publicis, Ogilvy, Hogarth, Nike, Mercado Libre, Unilever, Nestlé, Alibaba, and Mercari. 20+ enterprise stakeholders across APAC, NA, and EMEA. 95% enterprise client retention rate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ EXPERIENCE ═══ -->
+<section id="experience">
+  <div class="section-label">// experience</div>
+  <h2>Career</h2>
+  <div class="timeline">
+
+    <div class="timeline-item current" data-anim>
+      <div class="timeline-date">2025 — Present</div>
+      <div class="timeline-role">Director of AI & Automation</div>
+      <div class="timeline-company">VMG Digital &middot; Singapore</div>
+      <div class="timeline-desc">
+        Built VMG's AI function from the ground up, serving 40-50 people across multiple teams. Designed and deployed "Kraken" — a multi-agent orchestration system with 1 orchestrator + 11 specialized sub-agents, each powered by task-matched LLMs (Gemini 2.5 Flash, GPT-5.4, Grok 4.1 Fast). Also built an AI-powered LinkedIn ads analysis platform using multimodal LLMs. Established AI pods across 4 departments (7 people total). Now leading commercialization of internal AI tools into external-facing products.
+      </div>
+      <div class="timeline-tags">
+        <span class="tag">Multi-agent orchestration</span>
+        <span class="tag">LLM selection</span>
+        <span class="tag">Product strategy</span>
+        <span class="tag">Team building</span>
+        <span class="tag">AI commercialization</span>
+      </div>
+    </div>
+
+    <div class="timeline-item" data-anim>
+      <div class="timeline-date">2015 — 2024</div>
+      <div class="timeline-role">Co-founder & CSO</div>
+      <div class="timeline-company">Shakr &rarr; acquired by Shuttlerock (2024) &middot; Seoul & Singapore</div>
+      <div class="timeline-desc">
+        Co-founded and scaled a video ad technology platform enabling brands to create millions of personalized video ads at scale. Turned the Meta partnership into Shakr's largest revenue driver. Sourced and closed a 7-figure licensing deal with TikTok. Managed relationships with global agencies (Publicis, Ogilvy, Hogarth) and direct enterprise clients (Nike, Mercado Libre, Unilever, Nestlé, Mercari, Alibaba). Spearheaded transition to GPU-based rendering, reducing COGS by 10x. Scaled customer success across NA and APAC (13 direct reports), increasing revenue by 26%. Developed the Video-To-Go program with Meta across 20+ events in 3 regions, serving 600+ clients.
+      </div>
+      <div class="timeline-tags">
+        <span class="tag">Enterprise partnerships</span>
+        <span class="tag">Platform strategy</span>
+        <span class="tag">Ad tech</span>
+        <span class="tag">Global GTM</span>
+        <span class="tag">Meta</span>
+        <span class="tag">TikTok</span>
+        <span class="tag">GPU rendering</span>
+      </div>
+    </div>
+
+    <div class="timeline-item" data-anim>
+      <div class="timeline-date">2013 — 2015</div>
+      <div class="timeline-role">Earlier roles</div>
+      <div class="timeline-company">Seoul, South Korea</div>
+      <div class="timeline-desc" style="margin-bottom: 0;">
+        <div class="prev-roles">
+          <div class="prev-role"><span class="title">Marketing Associate — Spika Inc.</span><span class="year">2014–2015</span></div>
+          <div class="prev-role"><span class="title">Sales Development — EC21</span><span class="year">2014</span></div>
+          <div class="prev-role"><span class="title">Digital Editor & Content — beSUCCESS</span><span class="year">2013</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item" data-anim>
+      <div class="timeline-date">2011 — 2014</div>
+      <div class="timeline-role">Education</div>
+      <div class="timeline-company">Sweden & South Korea</div>
+      <div class="timeline-desc" style="margin-bottom: 0;">
+        <div class="prev-roles">
+          <div class="prev-role"><span class="title">University of Gothenburg — Communication & Media Studies (BA)</span><span class="year">2011–2014</span></div>
+          <div class="prev-role"><span class="title">Yonsei University — Intl. Management & Entrepreneurship</span><span class="year">2013</span></div>
+          <div class="prev-role"><span class="title">Gothenburg School of Economics — Business Admin</span><span class="year">2011–2012</span></div>
+        </div>
+      </div>
+      <div class="timeline-tags" style="margin-top:16px">
+        <span class="tag">Techstars Startup Mentor (2020–2022)</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ KRAKEN — AGENT ARCHITECTURE ═══ -->
+<section id="agents">
+  <div class="section-label">// kraken</div>
+  <h2>What I Built: Kraken</h2>
+  <div class="diagram-container" data-anim>
+    <div class="diagram-intro">
+      Kraken is a production multi-agent creative brief orchestrator I designed and deployed at VMG. One orchestrator agent (GPT-5.4) coordinates 11 specialized sub-agents (all on Grok 4.1 Fast), with Gemini 2.5 Flash handling multimodal PDF ingestion. The system transforms raw client briefs into structured campaign strategy through three phases: foundation & audience analysis, strategy synthesis, and creative development.
+    </div>
+    <div class="diagram-wrapper">
+      <div class="diagram-svg-wrap">
+        <svg class="agent-diagram" viewBox="0 0 900 550" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6" fill="none" stroke="#00e599" stroke-width="1"/>
+            </marker>
+            <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L8,3 L0,6" fill="none" stroke="#53bdfa" stroke-width="1"/>
+            </marker>
+          </defs>
+
+          <!-- Input: User uploads PDF -->
+          <g class="agent-node" transform="translate(20, 20)">
+            <rect x="0" y="0" width="130" height="46" rx="6" fill="#151d28" stroke="#c79bf2" stroke-width="1.5"/>
+            <text x="65" y="18" text-anchor="middle" fill="#c79bf2" font-size="8" letter-spacing="1">USER</text>
+            <text x="65" y="34" text-anchor="middle" fill="#d4d4d8" font-size="10">Uploads PDF Brief</text>
+          </g>
+
+          <!-- Arrow -->
+          <line x1="150" y1="43" x2="190" y2="43" stroke="#22d3ee" stroke-width="1.2" class="data-flow"/>
+
+          <!-- Gemini ingestion -->
+          <g class="agent-node" transform="translate(190, 20)">
+            <rect x="0" y="0" width="170" height="46" rx="6" fill="#0d1f2b" stroke="#22d3ee" stroke-width="1.5"/>
+            <text x="85" y="18" text-anchor="middle" fill="#22d3ee" font-size="8" letter-spacing="1">INGESTION</text>
+            <text x="85" y="34" text-anchor="middle" fill="#d4d4d8" font-size="10">Gemini 2.5 Flash</text>
+          </g>
+
+          <!-- Arrow -->
+          <line x1="360" y1="43" x2="400" y2="43" stroke="#ffb454" stroke-width="1.2" class="data-flow"/>
+
+          <!-- Supabase (input) -->
+          <g class="agent-node" transform="translate(400, 20)">
+            <rect x="0" y="0" width="130" height="46" rx="6" fill="#1a1710" stroke="#ffb454" stroke-width="1.2"/>
+            <text x="65" y="18" text-anchor="middle" fill="#ffb454" font-size="8" letter-spacing="1">STORAGE</text>
+            <text x="65" y="34" text-anchor="middle" fill="#d4d4d8" font-size="10">Supabase</text>
+          </g>
+
+          <!-- Arrow down to orchestrator -->
+          <line x1="465" y1="66" x2="465" y2="110" stroke="#00e599" stroke-width="1.5" class="data-flow"/>
+
+          <!-- Orchestrator -->
+          <g class="agent-node" transform="translate(300, 110)">
+            <rect x="0" y="0" width="330" height="60" rx="8" fill="#0d1a28" stroke="#00e599" stroke-width="2"/>
+            <text x="165" y="22" text-anchor="middle" fill="#00e599" font-size="10" letter-spacing="1.5" font-weight="600">ORCHESTRATOR</text>
+            <text x="165" y="38" text-anchor="middle" fill="#d4d4d8" font-size="10">Routes to agents, manages state, user conversation</text>
+            <text x="165" y="53" text-anchor="middle" fill="#6b7280" font-size="9">GPT-5.4 — never processes brief content</text>
+          </g>
+
+          <!-- Phase labels -->
+          <text x="75" y="200" text-anchor="middle" fill="#34d399" font-size="8" letter-spacing="1.5" opacity="0.7">ANALYSIS</text>
+          <text x="375" y="200" text-anchor="middle" fill="#c79bf2" font-size="8" letter-spacing="1.5" opacity="0.7">STRATEGY</text>
+          <text x="675" y="200" text-anchor="middle" fill="#ffb454" font-size="8" letter-spacing="1.5" opacity="0.7">CREATIVE</text>
+
+          <!-- Lines from orchestrator to agents -->
+          <line x1="380" y1="170" x2="75" y2="210" stroke="#34d399" stroke-width="0.8" opacity="0.4" class="data-flow"/>
+          <line x1="420" y1="170" x2="225" y2="210" stroke="#34d399" stroke-width="0.8" opacity="0.4" class="data-flow"/>
+          <line x1="460" y1="170" x2="375" y2="210" stroke="#c79bf2" stroke-width="0.8" opacity="0.4" class="data-flow"/>
+          <line x1="500" y1="170" x2="525" y2="210" stroke="#c79bf2" stroke-width="0.8" opacity="0.4" class="data-flow"/>
+          <line x1="540" y1="170" x2="675" y2="210" stroke="#ffb454" stroke-width="0.8" opacity="0.4" class="data-flow"/>
+          <line x1="570" y1="170" x2="825" y2="210" stroke="#ffb454" stroke-width="0.8" opacity="0.4" class="data-flow"/>
+
+          <!-- ANALYSIS AGENTS (Steps 1-4) -->
+          <g class="agent-node" data-agent="1" transform="translate(10, 215)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#34d399" stroke-width="1"/>
+            <text x="12" y="16" fill="#34d399" font-size="8" letter-spacing="0.5">01</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">Assumption</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10">Logger</text>
+            <rect x="8" y="40" width="48" height="16" rx="3" fill="rgba(52,211,153,0.1)"/>
+            <text x="32" y="52" text-anchor="middle" fill="#34d399" font-size="8">AUTO</text>
+          </g>
+          <g class="agent-node" data-agent="2" transform="translate(10, 295)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#34d399" stroke-width="1"/>
+            <text x="12" y="16" fill="#34d399" font-size="8" letter-spacing="0.5">02</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">Product Truth</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10">Report</text>
+            <rect x="8" y="40" width="48" height="16" rx="3" fill="rgba(52,211,153,0.1)"/>
+            <text x="32" y="52" text-anchor="middle" fill="#34d399" font-size="8">AUTO</text>
+          </g>
+          <g class="agent-node" data-agent="3" transform="translate(160, 215)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#34d399" stroke-width="1"/>
+            <text x="12" y="16" fill="#34d399" font-size="8" letter-spacing="0.5">03</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">Persona</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10">Mapper</text>
+            <rect x="8" y="40" width="55" height="16" rx="3" fill="rgba(167,139,250,0.12)"/>
+            <text x="35" y="52" text-anchor="middle" fill="#c79bf2" font-size="8">REVIEW</text>
+          </g>
+          <g class="agent-node" data-agent="4" transform="translate(160, 295)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#34d399" stroke-width="1"/>
+            <text x="12" y="16" fill="#34d399" font-size="8" letter-spacing="0.5">04</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">Platform</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10">Strategist</text>
+            <rect x="8" y="40" width="48" height="16" rx="3" fill="rgba(52,211,153,0.1)"/>
+            <text x="32" y="52" text-anchor="middle" fill="#34d399" font-size="8">AUTO</text>
+          </g>
+
+          <!-- STRATEGY AGENTS (Steps 5-7) -->
+          <g class="agent-node" data-agent="5" transform="translate(310, 215)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#c79bf2" stroke-width="1"/>
+            <text x="12" y="16" fill="#c79bf2" font-size="8" letter-spacing="0.5">05</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">KPI</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10">Strategist</text>
+            <rect x="8" y="40" width="55" height="16" rx="3" fill="rgba(167,139,250,0.12)"/>
+            <text x="35" y="52" text-anchor="middle" fill="#c79bf2" font-size="8">REVIEW</text>
+          </g>
+          <g class="agent-node" data-agent="6" transform="translate(310, 295)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#c79bf2" stroke-width="1"/>
+            <text x="12" y="16" fill="#c79bf2" font-size="8" letter-spacing="0.5">06</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">4Ps</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10">Summary</text>
+            <rect x="8" y="40" width="48" height="16" rx="3" fill="rgba(52,211,153,0.1)"/>
+            <text x="32" y="52" text-anchor="middle" fill="#34d399" font-size="8">AUTO</text>
+          </g>
+          <g class="agent-node" data-agent="7" transform="translate(460, 215)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#c79bf2" stroke-width="1"/>
+            <text x="12" y="16" fill="#c79bf2" font-size="8" letter-spacing="0.5">07</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">FORCE</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10">Framework</text>
+            <rect x="8" y="40" width="48" height="16" rx="3" fill="rgba(52,211,153,0.1)"/>
+            <text x="32" y="52" text-anchor="middle" fill="#34d399" font-size="8">AUTO</text>
+          </g>
+
+          <!-- CREATIVE AGENTS (Steps 8-11) -->
+          <g class="agent-node" data-agent="8" transform="translate(610, 215)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#ffb454" stroke-width="1"/>
+            <text x="12" y="16" fill="#ffb454" font-size="8" letter-spacing="0.5">08</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">The 5 Whys</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10"></text>
+            <rect x="8" y="40" width="55" height="16" rx="3" fill="rgba(199,155,242,0.12)"/>
+            <text x="35" y="52" text-anchor="middle" fill="#c79bf2" font-size="8">SELECT</text>
+          </g>
+          <g class="agent-node" data-agent="9" transform="translate(610, 295)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#ffb454" stroke-width="1"/>
+            <text x="12" y="16" fill="#ffb454" font-size="8" letter-spacing="0.5">09</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">Strategy</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10">Alignment</text>
+            <rect x="8" y="40" width="48" height="16" rx="3" fill="rgba(52,211,153,0.1)"/>
+            <text x="32" y="52" text-anchor="middle" fill="#34d399" font-size="8">AUTO</text>
+          </g>
+          <g class="agent-node" data-agent="10" transform="translate(760, 215)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#ffb454" stroke-width="1"/>
+            <text x="12" y="16" fill="#ffb454" font-size="8" letter-spacing="0.5">10</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">Main</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10">Ideas</text>
+            <rect x="8" y="40" width="55" height="16" rx="3" fill="rgba(199,155,242,0.12)"/>
+            <text x="35" y="52" text-anchor="middle" fill="#c79bf2" font-size="8">SELECT</text>
+          </g>
+          <g class="agent-node" data-agent="11" transform="translate(760, 295)">
+            <rect x="0" y="0" width="130" height="68" rx="5" fill="#151d28" stroke="#ffb454" stroke-width="1"/>
+            <text x="12" y="16" fill="#ffb454" font-size="8" letter-spacing="0.5">11</text>
+            <text x="38" y="16" fill="#f4f4f5" font-size="10">Creative</text>
+            <text x="38" y="30" fill="#f4f4f5" font-size="10">Narratives</text>
+            <rect x="8" y="40" width="55" height="16" rx="3" fill="rgba(199,155,242,0.12)"/>
+            <text x="35" y="52" text-anchor="middle" fill="#f07178" font-size="8">APPROVE</text>
+          </g>
+
+          <!-- Sub-agent model label -->
+          <text x="450" y="382" text-anchor="middle" fill="#6b7280" font-size="8">All 11 sub-agents: Grok 4.1 Fast &middot; 1.89s latency &middot; 102 tok/s</text>
+
+          <!-- All agents write to DB -->
+          <line x1="450" y1="393" x2="450" y2="420" stroke="#ffb454" stroke-width="1" opacity="0.5" class="data-flow"/>
+
+          <!-- Supabase output layer -->
+          <g class="agent-node" transform="translate(200, 420)">
+            <rect x="0" y="0" width="500" height="46" rx="6" fill="#1a1710" stroke="#ffb454" stroke-width="1.2"/>
+            <text x="250" y="18" text-anchor="middle" fill="#ffb454" font-size="9" letter-spacing="1">SUPABASE — SHARED PERSISTENCE</text>
+            <text x="250" y="34" text-anchor="middle" fill="#6b7280" font-size="9">Sub-agents write directly — bypassing orchestrator to prevent lossy summarization</text>
+          </g>
+
+          <!-- Output -->
+          <line x1="450" y1="466" x2="450" y2="492" stroke="#00e599" stroke-width="1.5" class="data-flow"/>
+          <g class="agent-node" transform="translate(325, 492)">
+            <rect x="0" y="0" width="250" height="46" rx="6" fill="#0d2818" stroke="#00e599" stroke-width="1.5"/>
+            <text x="125" y="18" text-anchor="middle" fill="#00e599" font-size="9" letter-spacing="1">OUTPUT</text>
+            <text x="125" y="34" text-anchor="middle" fill="#d4d4d8" font-size="10">Structured campaign strategy</text>
+          </g>
+        </svg>
+      </div>
+      <div class="diagram-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>Analysis (autonomous)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#c79bf2"></div>Strategy (review/select)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffb454"></div>Creative (user decides)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#22d3ee"></div>Gemini ingestion</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#00e599"></div>Orchestrator (GPT-5.4)</div>
+      </div>
+    </div>
+
+    <div class="principles-grid">
+      <div class="principle">
+        <div class="p-label">DESIGN DECISION 01</div>
+        <div class="p-title">Modular agents, not monolithic</div>
+        <div class="p-text">A single model with all 11 frameworks in one system message couldn't maintain coherence — instructions bled across tasks. Isolating each step into its own agent with its own system message was the only way to get consistent output.</div>
+      </div>
+      <div class="principle">
+        <div class="p-label">DESIGN DECISION 02</div>
+        <div class="p-title">Database as output channel</div>
+        <div class="p-text">Passing sub-agent outputs back through the orchestrator caused lossy summarization — the orchestrator would rewrite or condense details. Sub-agents now write directly to Supabase. The orchestrator only receives completion signals.</div>
+      </div>
+      <div class="principle">
+        <div class="p-label">DESIGN DECISION 03</div>
+        <div class="p-title">Session persistence through state</div>
+        <div class="p-text">Progress stored in the database, not in memory. Users can leave mid-process, return days later, and resume at the correct step. Users can also go back and reprocess any previous step.</div>
+      </div>
+      <div class="principle">
+        <div class="p-label">DESIGN DECISION 04</div>
+        <div class="p-title">Human-in-the-loop at creative decision points</div>
+        <div class="p-text">Analytical steps (1-7) run with minimal user input. Creative divergence steps (8, 10, 11) require explicit user selection before anything is committed. The system augments strategists, not replaces them.</div>
+      </div>
+    </div>
+
+    <a class="launch-btn" href="Presentation/vmg-architecture.html" target="_blank">
+      <span>Open full interactive presentation</span>
+      <span class="arrow">&rarr;</span>
+    </a>
+  </div>
+</section>
+
+<!-- ═══ SIERRA FIT ═══ -->
+<section id="sierra">
+  <div class="section-label">// sierra_fit</div>
+  <h2>Why Sierra</h2>
+  <div class="fit-grid">
+    <div class="fit-card" data-anim>
+      <h3><span class="icon">&rarr;</span> Agent design intuition</h3>
+      <p>I designed and shipped a multi-agent system before applying to Sierra. Picked different models for different tasks, hit the architectural tradeoffs firsthand — where to isolate agents, how to handle state between them, when human review helps and when it's just friction. That means I can engage technically with Sierra's agent engineers during a build and with a prospect's technical team during discovery.</p>
+    </div>
+    <div class="fit-card" data-anim>
+      <h3><span class="icon">&rarr;</span> The founder-shaped strategist</h3>
+      <p>The strategist role is about owning the success of a deployment: understanding the client's technology, identifying which agent use cases actually move the needle, scoping the POC, collaborating with sales, engineering, and product, and keeping the whole thing on track through to a long-term commitment. That maps closely to what I did at Shakr for 9 years. Different product, same shape of work.</p>
+    </div>
+    <div class="fit-card" data-anim>
+      <h3><span class="icon">&rarr;</span> 9 years carrying deals</h3>
+      <p>I spent almost a decade selling a technology product into enterprises where the buyer didn't fully understand what they were buying. TikTok, Meta, Publicis, Nike — every one of those required building enough trust that someone would bet budget on us. As a co-founder, those deals were personal. That changes how you approach the work.</p>
+    </div>
+    <div class="fit-card" data-anim>
+      <h3><span class="icon">&rarr;</span> A European in Asia for 12 years</h3>
+      <p>I've lived and worked across Seoul and Singapore since 2013. Enterprise relationships with Mercari, Alibaba, agencies across the region. I'm not going to claim some special insight into every APAC market, but I've been here long enough that it's home, not an assignment.</p>
+    </div>
+  </div>
+  <div class="thesis-box" data-anim>
+    <div style="color: var(--green); font-size: 11px; letter-spacing: 2px; margin-bottom: 12px;">// THESIS</div>
+    <p style="font-family: var(--font-sans); font-size: 15px; color: var(--text-bright); line-height: 1.7; max-width: 700px;">
+      The way I see it, the product Sierra is really selling is <span style="color: var(--amber);">confidence</span>. Every enterprise CXO considering AI for customer-facing roles is running the same calculation: what happens to our brand if this goes wrong? Sierra's job is to make that risk feel manageable. The tech matters, but the reason someone signs a multi-year deal is because they trust that Sierra won't embarrass them.
+    </p>
+  </div>
+</section>
+
+<!-- ═══ PRESENTATION ═══ -->
+<section id="presentation" style="min-height: auto; padding-bottom: 40px;">
+  <div class="section-label">// presentation</div>
+  <h2>Kraken — Full Presentation</h2>
+  <div class="pres-embed-wrap" data-anim>
+    <div class="pres-frame-container">
+      <div class="pres-frame-bar">
+        <div class="title-area">
+          <div class="dots">
+            <div class="dot" style="background:#f07178"></div>
+            <div class="dot" style="background:#ffb454"></div>
+            <div class="dot" style="background:#00e599"></div>
+          </div>
+          <span class="fname">vmg-architecture.html</span>
+        </div>
+        <a class="open-link" href="Presentation/vmg-architecture.html" target="_blank">Open in new tab &rarr;</a>
+      </div>
+      <iframe class="pres-iframe" src="Presentation/vmg-architecture.html" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <p>Anton Eliasson &middot; 2026 &middot; <a href="mailto:anton.eliasson@gmail.com">anton.eliasson@gmail.com</a> &middot; <a href="https://linkedin.com/in/eliassonanton" target="_blank">LinkedIn</a></p>
+</footer>
+
+<!-- Agent Modal -->
+<div class="agent-modal-overlay" id="agentModalOverlay">
+  <div class="agent-modal">
+    <button class="agent-modal-close" onclick="closeAgentModal()">&times;</button>
+    <div class="modal-step" id="modalStep"></div>
+    <div class="modal-name" id="modalName"></div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-meta" id="modalTags"></div>
+    <div class="modal-mode" id="modalMode"></div>
+    <div class="modal-tools">
+      <div class="modal-tools-label">Tools</div>
+      <div class="modal-tools-list" id="modalTools"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Scroll-based animations ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+  document.querySelectorAll('[data-anim], .section-label, h2, .about-card, .stat, .timeline-item, .fit-card, .diagram-container, .pres-embed-wrap, .thesis-box').forEach(el => {
+    observer.observe(el);
+  });
+
+  // ── Active nav link ──
+  const sections = document.querySelectorAll('section');
+  const navLinks = document.querySelectorAll('nav .nav-links a');
+
+  const navObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => link.classList.remove('active'));
+        const id = entry.target.id;
+        const activeLink = document.querySelector(`nav a[href="#${id}"]`);
+        if (activeLink) activeLink.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => navObserver.observe(s));
+
+  // ── Hide scroll hint ──
+  const scrollHint = document.querySelector('.scroll-hint');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 100 && scrollHint) {
+      scrollHint.style.opacity = '0';
+      scrollHint.style.transition = 'opacity 0.4s';
+    }
+  }, { passive: true });
+
+  // ── Agent modal ──
+  const agentData = [
+    { step:1, name:"Automated Assumption Logger", desc:"Surfaces and interrogates explicit and implicit assumptions in briefs to prevent costly blind spots early. Outputs structured 6-field blocks (vignette, summary, why it matters, hypothesis, validation prompt, tag) with a Top 3 to validate first.", tools:["Get Brief Data","Log Results","3-retry logging"], tags:["Risk Assessment","Strategic Validation","Decision-Making"], mode:"auto", modeLabel:"Autonomous — runs without user input" },
+    { step:2, name:"Product Truth Report", desc:"Produces a 16-section strategic product analysis: competitive benchmarking, consumer voice verbatims, innovation radar, cultural relevance, and brand truth. All claims source-backed with web research.", tools:["Web Research","Competitive Analysis","Consumer Voice Data","Supabase"], tags:["Brand Strategy","Market Research","Consumer Insight"], mode:"auto", modeLabel:"Autonomous — runs without user input" },
+    { step:3, name:"Persona Mapper", desc:"Generates activation-ready audience personas as media test hypotheses, not empathy maps. Outputs exactly 1 core activation persona + 2 test angles, grounded in GWI Spark behavioral data for paid media campaigns.", tools:["GWI Spark","Audience Analysis","Supabase"], tags:["Audience Intelligence","Media Strategy","Performance Testing"], mode:"review", modeLabel:"User reviews personas before proceeding" },
+    { step:4, name:"Platform Strategist", desc:"Builds mobile-first creative playbooks per platform (LinkedIn, Meta, TikTok, YouTube). Includes feature audits, 3 persona hooks per persona, thumb-safe layout rules, QA checklists, and future platform scans.", tools:["Platform Documentation","Format Specs","Supabase"], tags:["Channel Strategy","Creative Direction","Platform Optimization"], mode:"auto", modeLabel:"Autonomous — runs without user input" },
+    { step:5, name:"KPI Strategist", desc:"Translates qualitative business ambitions into SMART KPIs pairing hard performance metrics with soft human-truth outcomes. Includes confidence-interval forecasts, flags unrealistic uplift targets (>±20%), and translates every KPI into creative execution implications.", tools:["Performance Data","Industry Benchmarks","Supabase"], tags:["Performance Metrics","Strategic Planning","Business Goals"], mode:"review", modeLabel:"User reviews KPI targets and forecasts" },
+    { step:6, name:"4Ps Summary", desc:"Distills Product, People, Platform, and Purpose into a fixed-format strategic summary. Strictest language rules in the system: 20+ banned words, max 1–2 stats per section. Acts as quality gate before creative phase.", tools:["Brief Data","Strategic Analysis","Supabase"], tags:["Quality Gate","Strategic Summary","Client Communication"], mode:"auto", modeLabel:"Autonomous — quality gate before creative" },
+    { step:7, name:"FORCE Framework", desc:"Delivers Focus, Orbit, Role, Culture, Effect analysis with headline and strategic summary. Bridges strategy to creative through the Insight Triangle: emotional tension × cultural behavior × brand truth.", tools:["Brief Data","Cultural Research","Supabase"], tags:["Strategic Framework","Emotional Intelligence","Cultural Fluency"], mode:"auto", modeLabel:"Autonomous — bridges strategy to creative" },
+    { step:8, name:"The 5 Whys", desc:"Uncovers breakthrough ideas through 5 progressively deeper WHY questions, then generates 5 distinct Creative North Star options. Big Ideas in 2–8 words that must pass the 'would a person actually say this?' test.", tools:["Insight Mining","Creative Development","Supabase"], tags:["Creative Strategy","Insight Discovery","Big Ideas"], mode:"select", modeLabel:"User selects 1 of 5 Creative North Star options" },
+    { step:9, name:"Creative Strategy Alignment", desc:"Transforms all prior agent outputs into a 25-slide client-ready presentation deck covering strategy, personas, brand truth, and approval framework. Incomplete sections marked for studio follow-up.", tools:["All Prior Agent Outputs","Presentation Architecture","Supabase"], tags:["Client Deliverable","Strategy Visualization"], mode:"auto", modeLabel:"Autonomous — assembles deliverable" },
+    { step:10, name:"Main Ideas", desc:"Transforms the Creative North Star into 7 overarching campaign ideas. Each is a 2-sentence narrative — conceptual, not executional. Natural language test: rewrite if it sounds unnatural spoken aloud.", tools:["Creative North Star","KPI Strategy","Supabase"], tags:["Big Idea Development","Strategic Platforms","Creative Briefs"], mode:"select", modeLabel:"User selects 1 of 7 overarching ideas" },
+    { step:11, name:"Creative Narratives", desc:"Generates mobile-first, platform-native narrative concepts for LinkedIn, Meta, TikTok, and YouTube. Stock/MG/UGC only. Two-tier logging: working memory for drafts, approved storage only on explicit user sign-off.", tools:["Platform Best Practices","Production Formats","Supabase (CNC)","Supabase (TNC)"], tags:["Content Strategy","Platform-Native Creative","Mobile Optimization"], mode:"approve", modeLabel:"User approves final concepts for production" }
+  ];
+
+  const overlay = document.getElementById('agentModalOverlay');
+  const modal = overlay.querySelector('.agent-modal');
+
+  function openAgentModal(step) {
+    const a = agentData.find(d => d.step === step);
+    if (!a) return;
+    document.getElementById('modalStep').textContent = 'STEP ' + String(a.step).padStart(2, '0');
+    document.getElementById('modalName').textContent = a.name;
+    document.getElementById('modalDesc').textContent = a.desc;
+    document.getElementById('modalMode').className = 'modal-mode ' + a.mode;
+    document.getElementById('modalMode').textContent = a.modeLabel;
+    document.getElementById('modalTags').innerHTML = a.tags.map(t => '<span class="modal-tag">' + t + '</span>').join('');
+    document.getElementById('modalTools').innerHTML = a.tools.map(t => '<span class="tool-chip">' + t + '</span>').join('');
+    overlay.classList.add('open');
+  }
+
+  function closeAgentModal() {
+    overlay.classList.remove('open');
+  }
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeAgentModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAgentModal();
+  });
+
+  document.querySelectorAll('.agent-node[data-agent]').forEach(node => {
+    node.addEventListener('click', () => {
+      openAgentModal(parseInt(node.dataset.agent));
+    });
+  });
+</script>
+
+</body>
+</html>

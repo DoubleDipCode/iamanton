@@ -1,0 +1,64 @@
+﻿Anton Eliasson
+Singapore | anton.eliasson@gmail.com | linkedin.com/in/eliassonanton
+
+
+Co-founder of an acquired ad-tech company. Now building AI agent systems for enterprise clients. Experienced in multi-agent orchestration, customer strategy, and scaling technology products across APAC, NA, and EMEA. Looking to bring hands-on agent development expertise and enterprise client experience to a high-growth AI company.
+
+
+PROFESSIONAL EXPERIENCE
+Director of AI & Automation | VMG Digital                            Singapore | 2025 - Present
+Built VMG's AI function from the ground up, serving 40-50 people across multiple teams. Leading the transition from internal tooling to external-facing AI products.
+AI Agent Systems & Architecture:
+- Designed and deployed a multi-agent orchestration system with 1 orchestrator + 12 specialized sub-agents, each powered by different LLMs (Gemini, OpenAI, Grok) selected for task-specific strengths.
+- System solves the "bad creative brief" problem: ingests client briefs, runs them through specialized agents (assumption challenger, product truth finder, competitive mapper, etc), outputs structured actionable briefs.
+- Built on a structured data pipeline with persistent state between agent stages, accessed through a custom chat interface for creative strategists.
+AI Product Development:
+- Built an AI-powered LinkedIn ads analysis platform as a LinkedIn partner company — scrapes ad libraries, analyzes creative via multi modal visual analysis LLMs and messaging patterns via AI, recommends performance improvements to brands.
+- Leading commercialization of internal AI tools into external-facing products for client revenue.
+- Established AI pods across 4 departments, each with an AI champion driving adoption and automation roadmaps. Total AI team size consists of 7 people.
+Enterprise Client & Leadership:
+- Work directly with C-suite leadership on AI strategy and product prioritization
+- KPI'd on product development and commercialization of AI consultancy, product builds, workflow efficiency improvements and GTM adoption
+
+
+Co-Founder & CSO | Shakr (Acquired 2024)                  Seoul & Singapore | 2015 - 2024
+Co-founded and scaled a video ad technology platform that enabled brands to create millions of personalized video ads at scale. Acted as the Chief Strategy Officer and led key enterprise partnerships. Grew company from early-stage to acquisition over 9 years. Shakr was acquired in 2024 by Shuttlerock.
+Strategic Partnerships & Enterprise Clients:
+- Led partnerships function — turned the Meta partnership into Shakr's largest revenue driver by embedding into Meta's partner recommendation ecosystem and working directly with Meta partnerships, sales and product teams.
+- Sourced and closed direct technology licensing deal with TikTok — the company's largest enterprise deal at 7 figures.
+- Managed relationships with global agencies (Publicis, Ogilvy, Hogarth) and direct enterprise clients (e.g Nike, Mercado Libre, Unilever, Nestle, Mercari, Alibaba)
+- Built and maintained partnerships across APAC, NA, and EMEA with 20+ enterprise stakeholders
+
+
+Product & Growth Leadership:
+- Spearheaded transition to GPU-based rendering, reducing COGS by 10X while maintaining quality.
+- Scaled customer success operations across North America and APAC (13 direct reports), increasing revenue by 26%.
+- Developed the Video-To-Go program with Meta across 20+ events in 3 regions, serving 600+ clients and achieving 80% partner product adoption uplift.
+- Achieved 95% enterprise client retention rate through dedicated account management.
+
+
+PREVIOUS EXPERIENCE
+Marketing Associate, Spika Inc.                                                                                                   2014 - 2015
+Sales Development Representative, EC21                                                                                     2014
+Digital Editor & Content Marketer, beSUCCESS                                                                            2013
+
+
+EDUCATION
+University of Gothenburg                          Bachelor's, Communication & Media Studies                        2011 - 2014
+Yonsei University (Seoul)                           International Management & Entrepreneurship                2013
+Gothenburg School of Economics          Business Administration & Management                           2011 - 2012
+
+
+LEADERSHIP & MENTORING
+Techstars Startup Mentor | 2020 - 2022
+- Provided business strategy and go-to-market guidance to early-stage startups
+
+
+TECHNICAL SKILLS
+AI & Agents: Multi-agent orchestration, LLM selection & prompt engineering, RAG, conversational AI, agent eval
+Product: Product strategy, roadmap development, customer discovery, competitive analysis
+Enterprise: Strategic partnerships, enterprise sales & support, stakeholder management, POC scoping
+Regional: APAC, NA, EMEA market experience | International team management
+Tools: AI/ML platforms (OpenAI, Gemini, Anthropic), CRM systems, analytics tools, Claude Code, Codex, Opencode
+LANGUAGES
+English (Native) | Swedish (Native) | Korean (Conversational)

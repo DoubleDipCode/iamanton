@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kevin Call — Speaker Notes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface-2: #1a1a26;
+    --border: #2a2a3d;
+    --text: #d4d4d8;
+    --text-dim: #71717a;
+    --text-bright: #fafafa;
+    --accent: #818cf8;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --amber-bg: rgba(251, 191, 36, 0.08);
+    --rose: #fb7185;
+    --rose-bg: rgba(251, 113, 133, 0.08);
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .meta {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+  }
+
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 12px;
+  }
+
+  .section p {
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .section p strong { color: var(--text-bright); }
+
+  .callout {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 14px 0;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .callout.coaching {
+    background: var(--amber-bg);
+    border-left: 3px solid var(--amber);
+    color: var(--text);
+  }
+
+  .callout.avoid {
+    background: var(--rose-bg);
+    border-left: 3px solid var(--rose);
+    color: var(--text);
+  }
+
+  .callout-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .callout.coaching .callout-label { color: var(--amber); }
+  .callout.avoid .callout-label { color: var(--rose); }
+
+  .timing {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    background: rgba(52, 211, 153, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 36px 0;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+
+  ul li {
+    padding: 5px 0 5px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    position: relative;
+  }
+
+  ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--green);
+  }
+
+  .question-block {
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 10px 0;
+  }
+
+  .question-block .q {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-bright);
+    margin-bottom: 6px;
+    font-style: italic;
+  }
+
+  .question-block .why {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<h1>Speaker Notes — Kevin Call</h1>
+<div class="meta">Round 2 &middot; Tuesday Mar 25 &middot; 30 minutes &middot; Kevin S. Zhang (Agent Development, SF)</div>
+
+<!-- ═══ CALL FLOW ═══ -->
+<div class="section">
+  <div class="section-label">Call Structure</div>
+  <div class="section-title">Suggested flow</div>
+  <div class="timing">0–3 min</div>
+  <p>Warm intro. Let Kevin set the agenda. He'll likely ask you to walk through what you've built.</p>
+  <div class="timing">3–12 min</div>
+  <p>Your walkthrough. <strong>Architecture-forward, not business-story-forward.</strong> Use the visual slides for structure. Lead with design decisions, not outcomes.</p>
+  <div class="timing">12–20 min</div>
+  <p>His questions. Expect: "What was the hardest part?" "How did you evaluate models?" "What would you do differently?"</p>
+  <div class="timing">20–28 min</div>
+  <p>Your questions to him. Pick 2–3 from the list below based on what felt most natural in the conversation.</p>
+  <div class="timing">28–30 min</div>
+  <p>Close. Brief, direct: "This is the role I want. The work is a natural extension of what I've been building. What's the best way to stay in touch as I move through the process?"</p>
+</div>
+
+<hr>
+
+<!-- ═══ SLIDE-BY-SLIDE NOTES ═══ -->
+<div class="section">
+  <div class="section-label">Slide 01 — Title</div>
+  <div class="section-title">Opening frame</div>
+  <p>Don't present this as a slide deck. If you screen-share, just have it open as a reference. Say something like: "I built a multi-agent orchestration system at VMG — let me walk you through the design decisions rather than just the business case. I have some visuals I can share if it's helpful."</p>
+  <div class="callout coaching">
+    <div class="callout-label">Coaching</div>
+    The name "Kraken" and the 11/3/1.89s stats give Kevin a mental frame immediately. Don't explain each stat — let them register visually while you talk about architecture.
+  </div>
+</div>
+
+<hr>
+
+<div class="section">
+  <div class="section-label">Slide 02 — Problem</div>
+  <div class="section-title">30 seconds max</div>
+  <p>Kevin doesn't care about the business problem. This is pure context so the architecture makes sense. One breath: "We work with global brands on digital creative. The bottleneck is bad briefs — incomplete, full of hidden assumptions, no structured analytical pipeline. Strategists spend days manually reconstructing what should have been in the brief. I built a system to solve that."</p>
+  <div class="callout avoid">
+    <div class="callout-label">Avoid</div>
+    Don't linger here. Don't go into client examples. Don't talk about revenue or team size. Move to architecture.
+  </div>
+</div>
+
+<hr>
+
+<div class="section">
+  <div class="section-label">Slide 03 — Architecture</div>
+  <div class="section-title">This is the core of the conversation</div>
+  <p>Walk through the flow top-to-bottom. Key points to hit:</p>
+  <ul>
+    <li><strong>PDF ingestion uses Gemini 2.5 Flash</strong> — chosen specifically for multimodal visual analysis. Briefs are designed PDFs, not plain text. Gemini outperformed other models at parsing layouts and brand assets. "We use Gemini across multiple products for image and video analysis — it's the best we've found for visual understanding."</li>
+    <li><strong>Orchestrator is GPT-5.4</strong> — needs strong reasoning for routing. "Its job is lightweight — it evaluates where you are in the pipeline and routes to the next agent. It never touches brief content directly."</li>
+    <li><strong>11 sub-agents on Grok 4.1 Fast</strong> — "We chose Grok for three reasons: most reliable tool-call execution, 1.89 second latency, 102 tokens per second. When you're running 11 sequential agents doing heavy analytical writing, speed compounds."</li>
+    <li><strong>Supabase at the bottom</strong> — "Sub-agents read from and write directly to the database. They bypass the orchestrator for output delivery. I'll explain why in a second."</li>
+  </ul>
+  <p>Click on individual agents if Kevin asks about specific steps. The expand panel gives you detail on each one.</p>
+  <div class="callout coaching">
+    <div class="callout-label">Sierra parallel</div>
+    If Kevin sees the connection to Sierra's constellation-of-models approach, let him make it. If he doesn't, draw it lightly: "I understand Sierra routes 15+ models by latency, cost, and capability. We arrived at a similar instinct independently — the right model for the right job, not the 'best' model for everything."
+  </div>
+</div>
+
+<hr>
+
+<div class="section">
+  <div class="section-label">Slide 04 — Models</div>
+  <div class="section-title">Three models, three reasons</div>
+  <p>This slide speaks for itself visually. If you're on it, the talking point is: "The model selection was never about benchmarks. Gemini for visual parsing. GPT for reasoning. Grok for speed and tool-call reliability. Each model was chosen for a specific capability advantage."</p>
+  <div class="callout coaching">
+    <div class="callout-label">If Kevin asks about evaluation</div>
+    "We tested multiple models for each role. For the sub-agents specifically, the differentiator was tool-call reliability — other models would skip the logging step or malform the tool call, which breaks the pipeline. Grok was the most consistent, and the speed was a bonus."
+  </div>
+</div>
+
+<hr>
+
+<div class="section">
+  <div class="section-label">Slide 05 — Design Decisions</div>
+  <div class="section-title">Your two strongest points</div>
+  <p><strong>Decision 01 (Modular, not monolithic):</strong> "We tried a single model with all instructions. It couldn't maintain coherence — instructions bled across tasks. The persona mapper would start using KPI language. So we isolated each step into its own agent with its own system message. It was the only way to get consistent output."</p>
+  <p><strong>Decision 02 (Database as output channel):</strong> "When we passed sub-agent outputs back through the orchestrator, it would summarize or rewrite them. The user never got the real output. So we had sub-agents write directly to the database. The orchestrator only gets a completion signal — never the content itself. This solved the lossy summarization problem."</p>
+  <div class="callout coaching">
+    <div class="callout-label">Why this matters to Kevin</div>
+    These are real engineering insights discovered through failure. Most strategist candidates from McKinsey can't talk about LLM failure modes because they haven't built anything. You can. This is your differentiator.
+  </div>
+</div>
+
+<hr>
+
+<div class="section">
+  <div class="section-label">Slide 06 — Pipeline</div>
+  <div class="section-title">Don't walk through all 11</div>
+  <p>The grouping is what matters: analysis → strategy → creative. Say: "The pipeline moves through three phases. Foundation and audience work, strategy synthesis, then creative development. Each agent reads all previously completed work — so by step 7, the agent has the accumulated context of everything before it."</p>
+  <p>If Kevin asks about a specific agent, click into it on the architecture slide.</p>
+  <div class="callout coaching">
+    <div class="callout-label">Highlight</div>
+    Point out the "User selects" badges on Steps 8, 10, 11. "Analytical steps run mostly autonomously. The human enters the loop at creative decision points — where taste and judgment matter."
+  </div>
+</div>
+
+<hr>
+
+<div class="section">
+  <div class="section-label">Slide 07 — Frontend</div>
+  <div class="section-title">Quick visual</div>
+  <p>Just show this briefly if relevant. "This is the current chat UI with pipeline progress on the left." Don't dwell on it — transition to what you'd redesign.</p>
+</div>
+
+<hr>
+
+<div class="section">
+  <div class="section-label">Slide 08 — Redesign</div>
+  <div class="section-title">Kevin will probably ask this anyway</div>
+  <p>Three points:</p>
+  <ul>
+    <li><strong>Batch-run analytical steps:</strong> "Steps 1–7 could run as a batch. The user's taste matters most from Step 8."</li>
+    <li><strong>Beyond chat UI:</strong> "A dashboard with an AI sidebar would work better than pure chat for a structured pipeline. I've prototyped this direction."</li>
+    <li><strong>Automated evals:</strong> "Quality is currently human-judged. At scale you need automated output scoring, consistency checks, regression testing when system messages change."</li>
+  </ul>
+  <div class="callout coaching">
+    <div class="callout-label">Connect to Sierra</div>
+    The evals point is especially relevant. At enterprise scale with regulated industries, you need automated quality assurance. This shows you're thinking about what it takes to go from internal tool to production system.
+  </div>
+</div>
+
+<hr>
+
+<!-- ═══ ANTICIPATED QUESTIONS ═══ -->
+<div class="section">
+  <div class="section-label">Likely Questions from Kevin</div>
+  <div class="section-title">Prepared responses</div>
+
+  <div class="question-block">
+    <div class="q">"What was the hardest part?"</div>
+    <div class="why">Getting agents to follow instructions consistently. We rewrote system messages dozens of times. The breakthrough was isolation — one agent per task, own system message, own context. And the database-bypass pattern for outputs, because chained LLM calls corrupt content.</div>
+  </div>
+
+  <div class="question-block">
+    <div class="q">"How do you evaluate which model to use?"</div>
+    <div class="why">Empirically. We test each model on the actual task with real briefs. For sub-agents, the key metric was tool-call reliability — not generation quality. Grok was the most consistent at invoking our logging tools correctly, and the speed advantage was significant at 11 sequential agents.</div>
+  </div>
+
+  <div class="question-block">
+    <div class="q">"What happens when agents disagree? Like the assumption logger flags something the product truth report contradicts?"</div>
+    <div class="why">They don't directly interact — each agent writes its output independently. But downstream agents read all prior outputs, so contradictions surface naturally. The 4Ps Summary agent (Step 6) acts as a synthesis/quality gate — it has the strictest language rules and forces everything into a coherent summary. If there's a real contradiction, the human catches it there. Honestly, this is an area for improvement — I'd want automated consistency checks.</div>
+  </div>
+
+  <div class="question-block">
+    <div class="q">"How does this compare to what Sierra does?"</div>
+    <div class="why">The architectural instincts converge — modular agents, specialized models, supervisors enforcing guardrails, persistent state. The gap is scale. My system handles internal creative workflows. Sierra handles millions of customer-facing interactions in regulated industries. But the design patterns translate: decomposition, specialization, persistent state, guardrails. I arrived at these independently, which means I'll understand Sierra's system deeply from day one.</div>
+  </div>
+
+  <div class="question-block">
+    <div class="q">"Why Sierra? Why this role?"</div>
+    <div class="why">I've spent 9 months building multi-agent systems — not reading about them, building them. Sierra is the company doing this at the highest level in enterprise. The strategist role combines the analytical thinking I did in partnerships at Shakr with the agent design work I'm doing now. I want to work on agent systems where the stakes are real — customer-facing, regulated, millions of interactions. That's where this gets interesting.</div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ═══ QUESTIONS FOR KEVIN ═══ -->
+<div class="section">
+  <div class="section-label">Questions for Kevin</div>
+  <div class="section-title">Pick 2–3 based on conversation flow</div>
+
+  <div class="question-block">
+    <div class="q">"When you're designing an agent for a new enterprise client, what's the first thing you try to understand about their existing workflows?"</div>
+    <div class="why">Shows you think about integration, not just capability. Gets Kevin talking about his actual work.</div>
+  </div>
+
+  <div class="question-block">
+    <div class="q">"How do you handle the tension between agent autonomy and guardrails? I used direct-to-database logging to prevent the orchestrator from corrupting outputs — curious how that works at Sierra's scale with regulated industries."</div>
+    <div class="why">Your strongest question. Directly connects your design experience to a problem Sierra solves at scale. Invites Kevin to talk about his work while showing technical depth.</div>
+  </div>
+
+  <div class="question-block">
+    <div class="q">"What does the handoff look like between the strategist and agent dev during a POC? I want to understand where the overlap is."</div>
+    <div class="why">Shows you're thinking about role boundaries — which is exactly what this round is assessing.</div>
+  </div>
+
+  <div class="question-block">
+    <div class="q">"What's the hardest agent to get right — is it the ones with the most complex logic, or the ones where tone and brand voice matter most?"</div>
+    <div class="why">Good if conversation is flowing well. Shows curiosity about the craft of agent building.</div>
+  </div>
+</div>
+
+<hr>
+
+<!-- ═══ REMINDERS ═══ -->
+<div class="section">
+  <div class="section-label">Quick Reminders</div>
+  <div class="section-title">What to avoid</div>
+  <div class="callout avoid">
+    <div class="callout-label">Don't</div>
+    <ul>
+      <li>Oversell the VMG system. It's an internal tool. Acknowledge the scale gap — it makes you more credible.</li>
+      <li>Go heavy on business strategy or JTBD framing. Save that for the strategist rounds. Kevin wants technical depth.</li>
+      <li>Mention n8n by name. Say "workflow orchestration platform" if asked about the infrastructure layer.</li>
+      <li>Lead with "how did you end up in agent development?" — fine if it comes up naturally, but don't open with it.</li>
+      <li>Mention part-time arrangement, side projects, visa situation, or compensation.</li>
+    </ul>
+  </div>
+</div>
+
+</body>
+</html>

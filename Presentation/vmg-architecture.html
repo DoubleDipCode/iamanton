@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kraken — Multi-Agent Creative Brief Orchestrator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#09090b;--surface:#111114;--surface-2:#18181b;--surface-3:#222228;
+    --border:#27272a;--border-hover:#3f3f46;
+    --text:#d4d4d8;--text-dim:#71717a;--text-bright:#fafafa;
+    --accent:#818cf8;--accent-2:#6366f1;--accent-bg:rgba(99,102,241,.08);
+    --green:#34d399;--green-bg:rgba(52,211,153,.1);
+    --amber:#fbbf24;--amber-bg:rgba(251,191,36,.1);
+    --cyan:#22d3ee;--cyan-bg:rgba(34,211,238,.08);
+    --rose:#fb7185;--rose-bg:rgba(251,113,133,.08);
+    --user:#a78bfa;--user-bg:rgba(167,139,250,.08);
+    --auto:#34d399;--auto-bg:rgba(52,211,153,.06);
+  }
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+
+  /* ── Slides ── */
+  .slides{scroll-snap-type:y mandatory;overflow-y:scroll;height:100vh}
+  .slide{scroll-snap-align:start;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:60px 80px;position:relative;overflow:hidden}
+  .slide-number{position:absolute;top:28px;right:36px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);opacity:.5}
+
+  /* ── Animations ── */
+  .anim{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim.visible{opacity:1;transform:translateY(0)}
+  .anim-left{opacity:0;transform:translateX(-30px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim-left.visible{opacity:1;transform:translateX(0)}
+  .anim-right{opacity:0;transform:translateX(30px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim-right.visible{opacity:1;transform:translateX(0)}
+  .anim-scale{opacity:0;transform:scale(.92);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim-scale.visible{opacity:1;transform:scale(1)}
+  .anim-fade{opacity:0;transition:opacity .8s ease}
+  .anim-fade.visible{opacity:1}
+  .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+  .d5{transition-delay:.5s}.d6{transition-delay:.6s}.d7{transition-delay:.7s}.d8{transition-delay:.8s}
+  .d9{transition-delay:.9s}.d10{transition-delay:1s}.d11{transition-delay:1.1s}
+
+  /* ── Typography ── */
+  .slide-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);font-weight:600;margin-bottom:16px}
+  .slide-title{font-size:42px;font-weight:800;color:var(--text-bright);letter-spacing:-.03em;line-height:1.15;margin-bottom:20px;max-width:800px}
+  .slide-subtitle{font-size:18px;color:var(--text);line-height:1.6;max-width:640px;font-weight:400}
+  .slide-subtitle strong{color:var(--text-bright);font-weight:600}
+
+  /* ── Nav dots ── */
+  .nav-dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100}
+  .nav-dot{width:8px;height:8px;border-radius:50%;background:var(--surface-3);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+  .nav-dot.active{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px rgba(129,140,248,.4)}
+  .nav-dot:hover{border-color:var(--accent)}
+
+  /* ── Title slide ── */
+  .title-slide{justify-content:center;align-items:flex-start}
+  .vmg-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:500;color:var(--text-dim);margin-bottom:32px}
+  .title-main{font-size:56px;font-weight:800;color:var(--text-bright);letter-spacing:-.04em;line-height:1.1;margin-bottom:16px}
+  .title-desc{font-size:20px;color:var(--text-dim);max-width:600px;line-height:1.5;margin-bottom:40px}
+  .title-stats{display:flex;gap:40px}
+  .title-stat-value{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--text-bright)}
+  .title-stat-label{font-size:12px;color:var(--text-dim);margin-top:2px}
+  .slide-footer{position:absolute;bottom:28px;left:80px;right:80px;display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);opacity:.5}
+
+  /* ── Problem cards ── */
+  .problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:32px;max-width:1000px}
+  .problem-card{padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;transition:border-color .3s,box-shadow .3s}
+  .problem-card:hover{border-color:var(--border-hover);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+  .problem-card-title{font-size:15px;font-weight:600;color:var(--text-bright);margin-bottom:8px}
+  .problem-card-text{font-size:13px;color:var(--text-dim);line-height:1.6}
+
+  /* ── Architecture ── */
+  .arch-container{margin-top:28px;max-width:1100px;width:100%}
+  .arch-flow{display:flex;align-items:center;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+  .arch-flow-node{padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:500;color:var(--text);display:flex;align-items:center;gap:6px;transition:border-color .3s,box-shadow .3s}
+  .arch-flow-node .model-label{color:var(--green);font-family:'JetBrains Mono',monospace;font-size:10px}
+  .arch-flow-node.user-node{border-color:var(--user);background:var(--user-bg)}
+  .arch-flow-node.user-node .node-badge{color:var(--user);font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+  .arch-arrow{color:var(--text-dim);font-size:14px}
+
+  .arch-orch{padding:20px 24px;background:var(--accent-bg);border:1px solid var(--accent-2);border-radius:10px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;transition:box-shadow .4s}
+  .arch-orch.glow{box-shadow:0 0 30px rgba(99,102,241,.12)}
+  .arch-orch-name{font-size:16px;font-weight:700;color:var(--text-bright);margin-bottom:4px}
+  .arch-orch-desc{font-size:12px;color:var(--text-dim);max-width:500px;line-height:1.5}
+  .arch-orch-model{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);padding:4px 10px;background:rgba(99,102,241,.12);border-radius:4px;font-weight:500;white-space:nowrap}
+
+  .arch-connector{display:flex;justify-content:center;height:24px;margin-bottom:16px}
+  .arch-connector-line{width:2px;height:100%;background:linear-gradient(to bottom,var(--accent-2),var(--border))}
+
+  .arch-agents-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);font-weight:600;margin-bottom:12px}
+  .arch-agents-label .hl{color:var(--green)}
+
+  .arch-agents{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:8px}
+
+  .arch-agent{padding:10px 10px 8px;background:var(--surface);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+  .arch-agent:hover{border-color:var(--border-hover);background:var(--surface-2);transform:translateY(-2px)}
+  .arch-agent.expanded{border-color:var(--accent);background:var(--accent-bg)}
+  .arch-agent.user-step{border-left:2px solid var(--user)}
+  .arch-agent.auto-step{border-left:2px solid var(--auto)}
+  .arch-agent-step{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--accent);font-weight:500;margin-bottom:3px}
+  .arch-agent-name{font-size:11px;font-weight:600;color:var(--text-bright);line-height:1.25}
+  .arch-agent-mode{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:4px;padding:1px 5px;border-radius:2px;display:inline-block}
+  .arch-agent-mode.auto{color:var(--auto);background:var(--auto-bg)}
+  .arch-agent-mode.user{color:var(--user);background:var(--user-bg)}
+
+  /* Agent detail expand */
+  .agent-detail-bar{margin-top:12px;padding:18px 22px;background:var(--surface);border:1px solid var(--accent-2);border-radius:10px;display:none;animation:slideDown .25s cubic-bezier(.16,1,.3,1)}
+  .agent-detail-bar.visible{display:block}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+  .adb-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+  .adb-name{font-size:15px;font-weight:700;color:var(--text-bright)}
+  .adb-step{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);margin-bottom:2px}
+  .adb-close{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px}
+  .adb-close:hover{color:var(--text);background:var(--surface-3)}
+  .adb-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .adb-section-title{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);font-weight:600;margin-bottom:6px}
+  .adb-section-text{font-size:12px;color:var(--text);line-height:1.55}
+  .adb-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+  .adb-tag{padding:2px 7px;font-size:9px;font-weight:500;border-radius:3px;background:var(--surface-3);color:var(--text-dim)}
+  .adb-tag.tool{color:var(--cyan);background:var(--cyan-bg)}
+  .adb-user-badge{margin-top:10px;padding:6px 10px;border-radius:5px;font-size:11px;line-height:1.4}
+  .adb-user-badge.auto{background:var(--auto-bg);color:var(--auto);border:1px solid rgba(52,211,153,.2)}
+  .adb-user-badge.user{background:var(--user-bg);color:var(--user);border:1px solid rgba(167,139,250,.2)}
+  .adb-user-badge strong{font-weight:600}
+
+  /* Legend */
+  .arch-legend{display:flex;gap:20px;margin-top:16px;margin-bottom:8px}
+  .arch-legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-dim);font-weight:500}
+  .legend-bar{width:12px;height:3px;border-radius:2px}
+  .legend-bar.auto{background:var(--auto)}
+  .legend-bar.user{background:var(--user)}
+
+  /* DB layer */
+  .arch-db{margin-top:16px;padding:14px 20px;background:var(--amber-bg);border:1px solid rgba(251,191,36,.25);border-radius:8px;display:flex;align-items:center;gap:16px;transition:box-shadow .4s}
+  .arch-db.glow{box-shadow:0 0 20px rgba(251,191,36,.08)}
+  .arch-db-name{font-size:13px;font-weight:600;color:var(--amber)}
+  .arch-db-desc{font-size:11px;color:var(--text-dim);line-height:1.5}
+
+  /* ── Model cards ── */
+  .model-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:32px;max-width:1000px}
+  .model-card{padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;transition:all .3s}
+  .model-card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+  .model-card-role{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);font-weight:600;margin-bottom:8px}
+  .model-card-name{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;margin-bottom:12px}
+  .model-card-name.gemini{color:var(--cyan)}.model-card-name.gpt{color:var(--accent)}.model-card-name.grok{color:var(--green)}
+  .model-card-why{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:14px}
+  .model-card-stats{display:flex;gap:16px}
+  .model-stat{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim)}
+  .model-stat strong{color:var(--text-bright);font-weight:600}
+
+  /* ── Design decisions ── */
+  .decision-list{margin-top:32px;max-width:800px;display:flex;flex-direction:column;gap:24px}
+  .decision-item{display:flex;gap:20px}
+  .decision-number{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent);min-width:36px}
+  .decision-title{font-size:16px;font-weight:600;color:var(--text-bright);margin-bottom:6px}
+  .decision-text{font-size:14px;color:var(--text-dim);line-height:1.6}
+  .decision-text strong{color:var(--text)}
+
+  /* ── Pipeline / User Journey ── */
+  .journey-container{margin-top:28px;max-width:1100px;position:relative}
+  .journey-track{display:flex;gap:0;position:relative}
+  .journey-phase{flex:1;position:relative}
+  .journey-phase-header{padding:10px 16px;border-radius:8px 8px 0 0;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+  .journey-phase-header.analysis{background:var(--auto-bg);color:var(--auto);border:1px solid rgba(52,211,153,.15);border-bottom:none}
+  .journey-phase-header.strategy{background:linear-gradient(135deg,var(--auto-bg),var(--user-bg));color:var(--text);border:1px solid var(--border);border-bottom:none}
+  .journey-phase-header.creative{background:var(--user-bg);color:var(--user);border:1px solid rgba(167,139,250,.15);border-bottom:none}
+
+  .journey-steps{padding:0;border:1px solid var(--border);border-radius:0 0 8px 8px;overflow:hidden}
+  .journey-step{padding:12px 16px;border-bottom:1px solid rgba(39,39,42,.6);display:flex;align-items:flex-start;gap:10px;transition:background .2s}
+  .journey-step:last-child{border-bottom:none}
+  .journey-step:hover{background:var(--surface-2)}
+  .journey-step-left{min-width:28px}
+  .journey-step-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);font-weight:500}
+  .journey-step-name{font-size:12px;font-weight:600;color:var(--text-bright);line-height:1.3;margin-bottom:2px}
+  .journey-step-desc{font-size:11px;color:var(--text-dim);line-height:1.4}
+
+  .journey-mode{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:3px;margin-top:4px}
+  .journey-mode.auto{color:var(--auto);background:var(--auto-bg)}
+  .journey-mode.review{color:var(--amber);background:var(--amber-bg)}
+  .journey-mode.select{color:var(--user);background:var(--user-bg)}
+  .journey-mode.approve{color:var(--rose);background:var(--rose-bg)}
+
+  .journey-mode-icon{width:6px;height:6px;border-radius:50%;display:inline-block}
+  .journey-mode-icon.auto{background:var(--auto)}
+  .journey-mode-icon.review{background:var(--amber)}
+  .journey-mode-icon.select{background:var(--user)}
+  .journey-mode-icon.approve{background:var(--rose)}
+
+  /* Journey legend */
+  .journey-legend{display:flex;gap:20px;margin-top:20px}
+  .journey-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim)}
+  .jl-dot{width:8px;height:8px;border-radius:50%}
+
+  /* User touchpoint callout */
+  .user-flow-callout{margin-top:20px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;max-width:1100px}
+  .user-flow-title{font-size:12px;font-weight:600;color:var(--text-bright);margin-bottom:8px}
+  .user-flow-steps{display:flex;align-items:center;gap:0;flex-wrap:wrap}
+  .ufs-item{padding:6px 12px;font-size:11px;font-weight:500;border-radius:5px;white-space:nowrap}
+  .ufs-item.user-action{background:var(--user-bg);color:var(--user);border:1px solid rgba(167,139,250,.2)}
+  .ufs-item.system{background:var(--surface-2);color:var(--text-dim);border:1px solid var(--border)}
+  .ufs-arrow{padding:0 6px;color:var(--text-dim);font-size:12px}
+
+  /* ── Frontend ── */
+  .frontend-container{margin-top:32px;max-width:1000px}
+  .frontend-img{width:100%;border-radius:12px;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.5);transition:box-shadow .4s}
+  .frontend-img:hover{box-shadow:0 24px 70px rgba(0,0,0,.6)}
+  .frontend-features{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+  .frontend-feature{padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;transition:border-color .3s}
+  .frontend-feature:hover{border-color:var(--border-hover)}
+  .frontend-feature-title{font-size:12px;font-weight:600;color:var(--text-bright);margin-bottom:4px}
+  .frontend-feature-text{font-size:11px;color:var(--text-dim);line-height:1.5}
+
+  /* ── Redesign ── */
+  .redesign-items{margin-top:32px;max-width:780px;display:flex;flex-direction:column;gap:20px}
+  .redesign-item{padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:10px;border-left:3px solid var(--accent);transition:all .3s}
+  .redesign-item:hover{border-color:var(--border-hover);border-left-color:var(--accent);transform:translateX(4px)}
+  .redesign-item-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:6px}
+  .redesign-item-text{font-size:13px;color:var(--text-dim);line-height:1.6}
+
+  /* ── Pulse animation for data flow ── */
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  .pulse{animation:pulse 2s ease-in-out infinite}
+
+  @media(max-width:900px){
+    .slide{padding:40px}
+    .title-main{font-size:36px}
+    .slide-title{font-size:30px}
+    .arch-agents{grid-template-columns:repeat(3,1fr)}
+    .model-cards{grid-template-columns:1fr}
+    .journey-track{flex-direction:column;gap:12px}
+    .adb-grid{grid-template-columns:1fr}
+    .nav-dots{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-dots" id="navDots"></div>
+
+<div class="slides" id="slides">
+
+  <!-- ═══ SLIDE 1: Title ═══ -->
+  <div class="slide title-slide" data-label="Title">
+    <span class="slide-number">01</span>
+    <div class="vmg-badge anim">VMG Digital &middot; AI & Automation</div>
+    <div class="title-main anim d1">Kraken</div>
+    <div class="title-desc anim d2">Multi-agent creative brief orchestrator. 1 orchestrator, 11 specialized sub-agents, 3 LLMs — transforming raw client briefs into structured campaign strategy.</div>
+    <div class="title-stats anim d3">
+      <div><div class="title-stat-value">11</div><div class="title-stat-label">Specialized agents</div></div>
+      <div><div class="title-stat-value">3</div><div class="title-stat-label">LLMs (task-matched)</div></div>
+      <div><div class="title-stat-value">1.89s</div><div class="title-stat-label">Agent latency</div></div>
+      <div><div class="title-stat-value">102</div><div class="title-stat-label">Tokens/sec throughput</div></div>
+    </div>
+    <div class="slide-footer"><span>Anton Eliasson</span><span>March 2026</span></div>
+  </div>
+
+  <!-- ═══ SLIDE 2: Problem ═══ -->
+  <div class="slide" data-label="Problem">
+    <span class="slide-number">02</span>
+    <div class="slide-label anim">The Problem</div>
+    <div class="slide-title anim d1">Creative briefs are broken</div>
+    <div class="slide-subtitle anim d2">The recurring bottleneck in digital creative campaigns isn't production — it's what comes before it.</div>
+    <div class="problem-grid">
+      <div class="problem-card anim d3"><div class="problem-card-title">Incomplete inputs</div><div class="problem-card-text">Client briefs arrive missing audience specificity, competitive context, and measurable objectives. Strategists spend days manually reconstructing what should have been there.</div></div>
+      <div class="problem-card anim d4"><div class="problem-card-title">Hidden assumptions</div><div class="problem-card-text">Briefs are full of unstated beliefs about the audience, the product, and the platform. These go unchallenged until creative is already in production.</div></div>
+      <div class="problem-card anim d5"><div class="problem-card-title">No structured pipeline</div><div class="problem-card-text">The path from brief to creative direction relies on individual strategist judgment with no consistent analytical framework across campaigns.</div></div>
+      <div class="problem-card anim d6"><div class="problem-card-title">Time cost</div><div class="problem-card-text">Strategists spend days manually doing work that follows repeatable analytical patterns — assumption testing, persona building, KPI structuring, competitive mapping.</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3: Architecture ═══ -->
+  <div class="slide" data-label="Architecture" style="justify-content:flex-start;padding-top:40px;padding-bottom:20px;">
+    <span class="slide-number">03</span>
+    <div class="slide-label anim">System Architecture</div>
+    <div class="slide-title anim d1" style="font-size:32px;margin-bottom:16px">Orchestrator + 11 specialized sub-agents</div>
+
+    <div class="arch-container">
+      <!-- Input flow with user touchpoint -->
+      <div class="arch-flow anim d2">
+        <div class="arch-flow-node user-node"><span class="node-badge">User</span> Uploads PDF Brief</div>
+        <span class="arch-arrow">&#8594;</span>
+        <div class="arch-flow-node">Multimodal Extraction <span class="model-label">Gemini 2.5 Flash</span></div>
+        <span class="arch-arrow">&#8594;</span>
+        <div class="arch-flow-node">Supabase (structured)</div>
+        <span class="arch-arrow">&#8594;</span>
+        <div class="arch-flow-node user-node"><span class="node-badge">User</span> Selects brief in chat</div>
+        <span class="arch-arrow">&#8594;</span>
+        <div class="arch-flow-node">Webhook + Brief ID</div>
+      </div>
+
+      <!-- Orchestrator -->
+      <div class="arch-orch anim d3" id="orchBox">
+        <div>
+          <div class="arch-orch-name">Orchestrator Agent</div>
+          <div class="arch-orch-desc">Evaluates pipeline progress. Routes to correct sub-agent. Manages session state and user conversation. Never processes brief content directly.</div>
+        </div>
+        <div class="arch-orch-model">GPT-5.4</div>
+      </div>
+
+      <div class="arch-connector anim d4"><div class="arch-connector-line pulse"></div></div>
+
+      <!-- Legend -->
+      <div class="arch-legend anim d4">
+        <div class="arch-legend-item"><div class="legend-bar auto"></div> Autonomous</div>
+        <div class="arch-legend-item"><div class="legend-bar user"></div> User decision point</div>
+      </div>
+
+      <!-- Sub-agents -->
+      <div class="arch-agents-label anim d5">11 sub-agents &middot; <span class="hl">Grok 4.1 Fast</span> &middot; 1.89s latency &middot; 102 tok/s</div>
+      <div class="arch-agents" id="archAgents"></div>
+      <div class="agent-detail-bar" id="agentDetail"></div>
+
+      <!-- DB -->
+      <div class="arch-db anim d8" id="dbBox">
+        <div style="font-size:20px">&#128451;</div>
+        <div>
+          <div class="arch-db-name">Supabase — Shared Persistence</div>
+          <div class="arch-db-desc">Source of truth for all brief data and agent outputs. Sub-agents read context and write outputs directly — bypassing the orchestrator to prevent lossy summarization.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 4: Model Selection ═══ -->
+  <div class="slide" data-label="Models">
+    <span class="slide-number">04</span>
+    <div class="slide-label anim">Model Selection</div>
+    <div class="slide-title anim d1">Three models, three reasons</div>
+    <div class="slide-subtitle anim d2">Each model selected for a specific capability advantage — not benchmarks.</div>
+    <div class="model-cards">
+      <div class="model-card anim-left d3">
+        <div class="model-card-role">Ingestion Layer</div>
+        <div class="model-card-name gemini">Gemini 2.5 Flash</div>
+        <div class="model-card-why">Best-in-class multimodal analysis. Creative briefs arrive as designed PDFs with layouts, images, and brand assets. Gemini's visual understanding outperforms other models at parsing these into structured data. Used across multiple products for image and video analysis.</div>
+        <div class="model-card-stats"><div class="model-stat">Selected for: <strong>visual parsing</strong></div></div>
+      </div>
+      <div class="model-card anim d4">
+        <div class="model-card-role">Orchestration</div>
+        <div class="model-card-name gpt">GPT-5.4</div>
+        <div class="model-card-why">Strong reasoning and instruction-following for routing decisions and conversational management. The orchestrator's job is lightweight — it routes, tracks state, and manages the user conversation. It never processes brief content.</div>
+        <div class="model-card-stats"><div class="model-stat">Selected for: <strong>reasoning & routing</strong></div></div>
+      </div>
+      <div class="model-card anim-right d5">
+        <div class="model-card-role">11 Sub-Agents</div>
+        <div class="model-card-name grok">Grok 4.1 Fast</div>
+        <div class="model-card-why">Most reliable tool-call execution of any model tested. Other models would skip logging steps or malform tool calls. Combined with exceptional speed, the latency compounds across 11 pipeline steps.</div>
+        <div class="model-card-stats">
+          <div class="model-stat"><strong>1.89s</strong> latency</div>
+          <div class="model-stat"><strong>102</strong> tok/s</div>
+          <div class="model-stat">Selected for: <strong>speed + tool reliability</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 5: Design Decisions ═══ -->
+  <div class="slide" data-label="Design Decisions">
+    <span class="slide-number">05</span>
+    <div class="slide-label anim">Key Design Decisions</div>
+    <div class="slide-title anim d1">What we learned building it</div>
+    <div class="decision-list">
+      <div class="decision-item anim-left d2">
+        <div class="decision-number">01</div>
+        <div><div class="decision-title">Modular agents, not monolithic</div><div class="decision-text">A single model with all 11 frameworks in one system message <strong>couldn't maintain coherence</strong>. Instructions bled across tasks. Isolating each step into its own agent with its own system message was the only way to get consistent output.</div></div>
+      </div>
+      <div class="decision-item anim-left d3">
+        <div class="decision-number">02</div>
+        <div><div class="decision-title">Database as output channel</div><div class="decision-text">Passing sub-agent outputs back through the orchestrator caused <strong>lossy summarization</strong>. The orchestrator would rewrite or condense details. Sub-agents now write directly to Supabase. The orchestrator only receives completion signals — never content.</div></div>
+      </div>
+      <div class="decision-item anim-left d4">
+        <div class="decision-number">03</div>
+        <div><div class="decision-title">Session persistence through state</div><div class="decision-text">Progress stored in the database, not in memory. Users can leave mid-process, return days later, and resume at the correct step. Users can also go back and reprocess any previous step.</div></div>
+      </div>
+      <div class="decision-item anim-left d5">
+        <div class="decision-number">04</div>
+        <div><div class="decision-title">Human-in-the-loop at creative decision points</div><div class="decision-text">Analytical steps (1–7) run with minimal user input. Creative divergence steps (8, 10, 11) require <strong>explicit user selection</strong> before anything is logged. Nothing is committed until the user chooses.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 6: Pipeline + User Journey ═══ -->
+  <div class="slide" data-label="Pipeline" style="justify-content:flex-start;padding-top:44px;">
+    <span class="slide-number">06</span>
+    <div class="slide-label anim">The 11-Step Pipeline</div>
+    <div class="slide-title anim d1" style="font-size:30px">Where the system works — and where the user decides</div>
+
+    <div class="journey-container">
+      <div class="journey-track">
+        <!-- Foundation -->
+        <div class="journey-phase anim d2" style="flex:1.15">
+          <div class="journey-phase-header analysis">Foundation & Audience — Autonomous</div>
+          <div class="journey-steps">
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">01</div></div>
+              <div>
+                <div class="journey-step-name">Assumption Logger</div>
+                <div class="journey-step-desc">Surfaces explicit + implicit assumptions. Structured 6-field blocks.</div>
+                <div class="journey-mode auto"><span class="journey-mode-icon auto"></span> Autonomous</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">02</div></div>
+              <div>
+                <div class="journey-step-name">Product Truth Report</div>
+                <div class="journey-step-desc">16-section deep analysis. Source-backed research.</div>
+                <div class="journey-mode auto"><span class="journey-mode-icon auto"></span> Autonomous</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">03</div></div>
+              <div>
+                <div class="journey-step-name">Persona Mapper</div>
+                <div class="journey-step-desc">1 core persona + 2 test angles. GWI-grounded.</div>
+                <div class="journey-mode review"><span class="journey-mode-icon review"></span> User reviews</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">04</div></div>
+              <div>
+                <div class="journey-step-name">Platform Strategist</div>
+                <div class="journey-step-desc">Mobile-first playbook per platform.</div>
+                <div class="journey-mode auto"><span class="journey-mode-icon auto"></span> Autonomous</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strategy -->
+        <div class="journey-phase anim d3">
+          <div class="journey-phase-header strategy">Strategy Synthesis — Guided</div>
+          <div class="journey-steps">
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">05</div></div>
+              <div>
+                <div class="journey-step-name">KPI Strategist</div>
+                <div class="journey-step-desc">Hard + soft KPI pairing. Confidence intervals.</div>
+                <div class="journey-mode review"><span class="journey-mode-icon review"></span> User reviews</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">06</div></div>
+              <div>
+                <div class="journey-step-name">4Ps Summary</div>
+                <div class="journey-step-desc">Product, People, Platform, Purpose. Quality gate.</div>
+                <div class="journey-mode auto"><span class="journey-mode-icon auto"></span> Autonomous</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">07</div></div>
+              <div>
+                <div class="journey-step-name">FORCE Framework</div>
+                <div class="journey-step-desc">Bridges strategy to creative. Insight Triangle.</div>
+                <div class="journey-mode auto"><span class="journey-mode-icon auto"></span> Autonomous</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Creative -->
+        <div class="journey-phase anim d4">
+          <div class="journey-phase-header creative">Creative Development — User-Led</div>
+          <div class="journey-steps">
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">08</div></div>
+              <div>
+                <div class="journey-step-name">The 5 Whys</div>
+                <div class="journey-step-desc">5 Creative North Star options. 2–8 word POVs.</div>
+                <div class="journey-mode select"><span class="journey-mode-icon select"></span> User selects 1 of 5</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">09</div></div>
+              <div>
+                <div class="journey-step-name">Strategy Alignment</div>
+                <div class="journey-step-desc">25-slide client-facing deck from all prior work.</div>
+                <div class="journey-mode auto"><span class="journey-mode-icon auto"></span> Autonomous</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">10</div></div>
+              <div>
+                <div class="journey-step-name">Main Ideas</div>
+                <div class="journey-step-desc">7 overarching campaign ideas. Natural language.</div>
+                <div class="journey-mode select"><span class="journey-mode-icon select"></span> User selects 1 of 7</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-step-left"><div class="journey-step-num">11</div></div>
+              <div>
+                <div class="journey-step-name">Creative Narratives</div>
+                <div class="journey-step-desc">Mobile-first concepts per platform. Stock/MG/UGC.</div>
+                <div class="journey-mode approve"><span class="journey-mode-icon approve"></span> User approves for production</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="journey-legend anim d5">
+        <div class="journey-legend-item"><div class="jl-dot" style="background:var(--auto)"></div> System runs autonomously</div>
+        <div class="journey-legend-item"><div class="jl-dot" style="background:var(--amber)"></div> User reviews output</div>
+        <div class="journey-legend-item"><div class="jl-dot" style="background:var(--user)"></div> User selects from options</div>
+        <div class="journey-legend-item"><div class="jl-dot" style="background:var(--rose)"></div> User approves for production</div>
+      </div>
+
+      <!-- User flow summary -->
+      <div class="user-flow-callout anim d6">
+        <div class="user-flow-title">User's journey through the pipeline</div>
+        <div class="user-flow-steps">
+          <div class="ufs-item user-action">Upload brief</div><span class="ufs-arrow">&#8594;</span>
+          <div class="ufs-item system">Steps 1–2 run</div><span class="ufs-arrow">&#8594;</span>
+          <div class="ufs-item user-action">Review personas</div><span class="ufs-arrow">&#8594;</span>
+          <div class="ufs-item system">Steps 4–7 run</div><span class="ufs-arrow">&#8594;</span>
+          <div class="ufs-item user-action">Select North Star</div><span class="ufs-arrow">&#8594;</span>
+          <div class="ufs-item system">Step 9 runs</div><span class="ufs-arrow">&#8594;</span>
+          <div class="ufs-item user-action">Select main idea</div><span class="ufs-arrow">&#8594;</span>
+          <div class="ufs-item user-action">Approve concepts</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 7: Frontend ═══ -->
+  <div class="slide" data-label="Frontend">
+    <span class="slide-number">07</span>
+    <div class="slide-label anim">User Interface</div>
+    <div class="slide-title anim d1">Pipeline progress + conversational AI</div>
+    <div class="frontend-container">
+      <div class="anim-scale d2"><img src="kraken-frontend.png" alt="Kraken Chat Frontend" class="frontend-img" /></div>
+      <div class="frontend-features">
+        <div class="frontend-feature anim d3"><div class="frontend-feature-title">Visual pipeline progress</div><div class="frontend-feature-text">Left sidebar shows all 11 steps with completion status. User always knows where they are in the process.</div></div>
+        <div class="frontend-feature anim d4"><div class="frontend-feature-title">Brief selection</div><div class="frontend-feature-text">Users select which brief to work on. Each brief maintains independent progress through the pipeline.</div></div>
+        <div class="frontend-feature anim d5"><div class="frontend-feature-title">Context-aware conversation</div><div class="frontend-feature-text">The orchestrator guides the user through each stage, explaining what's completed and what's next.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 8: Redesign ═══ -->
+  <div class="slide" data-label="Redesign">
+    <span class="slide-number">08</span>
+    <div class="slide-label anim">Looking Forward</div>
+    <div class="slide-title anim d1">What I'd redesign</div>
+    <div class="redesign-items">
+      <div class="redesign-item anim-left d2"><div class="redesign-item-title">Batch-run analytical steps</div><div class="redesign-item-text">Steps 1–7 could run as a batch with minimal user input, presenting results for review rather than requiring step-by-step confirmation. The user's taste and judgment matter most from Step 8 onward.</div></div>
+      <div class="redesign-item anim-left d3"><div class="redesign-item-title">Beyond chat UI</div><div class="redesign-item-text">A dashboard view where you see all 11 steps with their outputs, click into any agent's deliverable, and have a context-aware AI sidebar. More effective than pure chat for a structured pipeline.</div></div>
+      <div class="redesign-item anim-left d4"><div class="redesign-item-title">Automated evaluation framework</div><div class="redesign-item-text">Quality assessment is currently human. At scale: automated evals — output quality scoring, consistency checks across agents, regression testing when system messages change.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const agents = [
+  { step:1, name:"Assumption Logger", desc:"Surfaces and interrogates explicit + implicit assumptions. Structured 6-field blocks with Top 3 prioritized for validation.", tools:["Supabase","3-retry logging"], tags:["Explicit","Implicit"], mode:"auto", modeLabel:"Autonomous — runs without user input" },
+  { step:2, name:"Product Truth Report", desc:"16-section strategic product analysis. Competitive benchmarking, consumer voice verbatims, innovation radar, brand truth. All source-backed.", tools:["Supabase","Research/web"], tags:["Brand Truth","Competitive","Cultural"], mode:"auto", modeLabel:"Autonomous — runs without user input" },
+  { step:3, name:"Persona Mapper", desc:"1 core activation persona + 2 test angles. GWI Spark-grounded behavioral data. Personas as media test units, not empathy maps.", tools:["Supabase","GWI Spark"], tags:["Core Persona","Test Angles"], mode:"review", modeLabel:"User reviews personas before proceeding" },
+  { step:4, name:"Platform Strategist", desc:"Mobile-first digital playbook per platform. Feature audit, 3 persona hooks per persona, thumb-safe layout rules, QA checklist, future platform scan.", tools:["Supabase"], tags:["LinkedIn","Meta","TikTok","YouTube"], mode:"auto", modeLabel:"Autonomous — runs without user input" },
+  { step:5, name:"KPI Strategist", desc:"Pairs hard KPIs with soft/human-truth KPIs. Confidence-interval forecasts. Flags unrealistic uplift targets (>±20%). Translates every KPI into creative implications.", tools:["Supabase"], tags:["Hard KPIs","Soft KPIs","Forecasts"], mode:"review", modeLabel:"User reviews KPI targets and forecasts" },
+  { step:6, name:"4Ps Summary", desc:"Product, People, Platform, Purpose distillation. Strictest language rules in the system: 20+ banned words, max 1–2 stats per section. Quality gate before creative.", tools:["Supabase"], tags:["Quality Gate"], mode:"auto", modeLabel:"Autonomous — quality gate before creative" },
+  { step:7, name:"FORCE Framework", desc:"Focus, Orbit, Role, Culture, Effect. Bridges strategy to creative through Insight Triangle: emotional tension × cultural behavior × brand truth.", tools:["Supabase"], tags:["Strategy→Creative Bridge"], mode:"auto", modeLabel:"Autonomous — bridges strategy to creative" },
+  { step:8, name:"The 5 Whys", desc:"5 progressively deeper WHY questions, then 5 distinct Creative North Star options. Big Ideas in 2–8 words that pass the 'would a person say this?' test.", tools:["Supabase"], tags:["Creative North Star"], mode:"select", modeLabel:"User selects 1 of 5 Creative North Star options" },
+  { step:9, name:"Strategy Alignment", desc:"Assembles 25-slide client-facing deck from all previous outputs. All slides present; incomplete sections marked for studio.", tools:["Supabase"], tags:["Client Deliverable"], mode:"auto", modeLabel:"Autonomous — assembles deliverable" },
+  { step:10, name:"Main Ideas", desc:"7 overarching campaign ideas. 2-sentence narrative — conceptual, not executional. Natural language test: rewrite if unnatural spoken aloud.", tools:["Supabase"], tags:["Campaign Ideas"], mode:"select", modeLabel:"User selects 1 of 7 overarching ideas" },
+  { step:11, name:"Creative Narratives", desc:"Mobile-first creative concepts per platform. Stock/MG/UGC only. Two-tier logging: working memory for drafts, approved storage only on explicit user sign-off.", tools:["Supabase (CNC)","Supabase (TNC)"], tags:["Production-ready"], mode:"approve", modeLabel:"User approves final concepts for production" }
+];
+
+const modeStyles = {
+  auto: { color:'var(--auto)', bg:'var(--auto-bg)', border:'rgba(52,211,153,.2)', label:'Autonomous' },
+  review: { color:'var(--amber)', bg:'var(--amber-bg)', border:'rgba(251,191,36,.2)', label:'User reviews' },
+  select: { color:'var(--user)', bg:'var(--user-bg)', border:'rgba(167,139,250,.2)', label:'User selects' },
+  approve: { color:'var(--rose)', bg:'var(--rose-bg)', border:'rgba(251,113,133,.2)', label:'User approves' }
+};
+
+function renderArchAgents() {
+  const grid = document.getElementById('archAgents');
+  grid.innerHTML = agents.map((a, i) => {
+    const isUser = a.mode !== 'auto';
+    return `<div class="arch-agent ${isUser ? 'user-step' : 'auto-step'} anim d${Math.min(5 + Math.floor(i/2), 11)}" id="arch-agent-${i}" onclick="toggleAgent(${i})">
+      <div class="arch-agent-step">${String(a.step).padStart(2,'0')}</div>
+      <div class="arch-agent-name">${a.name}</div>
+      <div class="arch-agent-mode ${a.mode}">${modeStyles[a.mode].label}</div>
+    </div>`;
+  }).join('');
+}
+
+let openAgent = -1;
+
+function toggleAgent(idx) {
+  const bar = document.getElementById('agentDetail');
+  document.querySelectorAll('.arch-agent').forEach(c => c.classList.remove('expanded'));
+  if (openAgent === idx) { bar.classList.remove('visible'); openAgent = -1; return; }
+  openAgent = idx;
+  document.getElementById(`arch-agent-${idx}`).classList.add('expanded');
+  const a = agents[idx];
+  const ms = modeStyles[a.mode];
+  bar.innerHTML = `
+    <div class="adb-header">
+      <div>
+        <div class="adb-step">Step ${String(a.step).padStart(2,'0')} of 11 &middot; Grok 4.1 Fast</div>
+        <div class="adb-name">${a.name}</div>
+      </div>
+      <button class="adb-close" onclick="toggleAgent(${idx})">&#10005;</button>
+    </div>
+    <div class="adb-grid">
+      <div>
+        <div class="adb-section-title">What it does</div>
+        <div class="adb-section-text">${a.desc}</div>
+      </div>
+      <div>
+        <div class="adb-section-title">Tools</div>
+        <div class="adb-tags">${a.tools.map(t=>`<span class="adb-tag tool">${t}</span>`).join('')}</div>
+        <div class="adb-section-title" style="margin-top:10px">Tags</div>
+        <div class="adb-tags">${a.tags.map(t=>`<span class="adb-tag">${t}</span>`).join('')}</div>
+      </div>
+      <div>
+        <div class="adb-section-title">Data Flow</div>
+        <div class="adb-section-text">Reads brief ID + all prior outputs from Supabase → Processes with isolated system message → Writes output directly to database → Orchestrator receives completion signal only.</div>
+        <div class="adb-user-badge ${a.mode}" style="border-color:${ms.border}">
+          <strong>${ms.label}:</strong> ${a.modeLabel}
+        </div>
+      </div>
+    </div>`;
+  bar.classList.add('visible');
+}
+
+// ── Scroll animations ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+function initAnimations() {
+  document.querySelectorAll('.anim, .anim-left, .anim-right, .anim-scale, .anim-fade').forEach(el => observer.observe(el));
+}
+
+// ── Nav dots ──
+const slideEls = () => document.querySelectorAll('.slide');
+let activeSlide = 0;
+
+function renderDots() {
+  document.getElementById('navDots').innerHTML = Array.from({length: slideEls().length}, (_, i) =>
+    `<div class="nav-dot ${i===0?'active':''}" onclick="goToSlide(${i})" title="${slideEls()[i].dataset.label}"></div>`
+  ).join('');
+}
+
+function goToSlide(i) { slideEls()[i].scrollIntoView({ behavior:'smooth' }); }
+
+function updateActiveDot() {
+  const s = document.getElementById('slides');
+  const current = Math.round(s.scrollTop / window.innerHeight);
+  if (current !== activeSlide) {
+    activeSlide = current;
+    document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i===current));
+  }
+}
+
+document.getElementById('slides').addEventListener('scroll', updateActiveDot);
+
+document.addEventListener('keydown', e => {
+  const total = slideEls().length;
+  if (['ArrowDown',' ','ArrowRight'].includes(e.key)) { e.preventDefault(); if (activeSlide < total-1) goToSlide(activeSlide+1); }
+  if (['ArrowUp','ArrowLeft'].includes(e.key)) { e.preventDefault(); if (activeSlide > 0) goToSlide(activeSlide-1); }
+});
+
+renderArchAgents();
+renderDots();
+initAnimations();
+</script>
+</body>
+</html>
