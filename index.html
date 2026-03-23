@@ -330,6 +330,55 @@
   }
   .project-viewer.visible { opacity: 1; transform: translateY(0); }
 
+  .project-detail-panel {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 8px; padding: 40px; display: none;
+  }
+  .project-detail-panel.active { display: block; }
+  .project-detail-panel h3 {
+    color: var(--text-bright); font-size: 20px; font-weight: 600;
+    margin-bottom: 8px; font-family: var(--font-mono);
+  }
+  .project-detail-panel .detail-subtitle {
+    color: var(--green); font-size: 12px; text-transform: uppercase;
+    letter-spacing: 2px; margin-bottom: 20px; font-weight: 600;
+  }
+  .project-detail-panel .detail-body {
+    font-family: var(--font-sans); font-size: 14px; color: var(--text);
+    line-height: 1.8; max-width: 720px; margin-bottom: 28px;
+  }
+  .tool-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+  .tool-item {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 6px; padding: 16px;
+  }
+  .tool-item .tool-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    margin-bottom: 6px; font-weight: 600;
+  }
+  .tool-item .tool-label.ai { color: var(--green); }
+  .tool-item .tool-label.data { color: var(--blue); }
+  .tool-item .tool-label.creative { color: var(--purple); }
+  .tool-item .tool-label.media { color: var(--amber); }
+  .tool-item .tool-name {
+    color: var(--text-bright); font-family: var(--font-mono);
+    font-size: 13px; font-weight: 500; margin-bottom: 4px;
+  }
+  .tool-item .tool-desc {
+    color: var(--text-dim); font-family: var(--font-sans);
+    font-size: 12px; line-height: 1.5;
+  }
+  .detail-stack {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px;
+    padding-top: 20px; border-top: 1px solid var(--border);
+  }
+  .detail-stack .stack-chip {
+    font-family: var(--font-mono); font-size: 11px;
+    padding: 4px 12px; border-radius: 4px;
+    background: rgba(0,229,153,0.06); border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
   .pres-embed-wrap {
     margin-top: 0; opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
   }
@@ -461,6 +510,8 @@
     .diagram-wrapper { padding: 20px; }
     .pres-iframe { height: 50vh; }
     .projects-grid { grid-template-columns: 1fr; }
+    .tool-showcase { grid-template-columns: 1fr; }
+    .project-detail-panel { padding: 24px; }
   }
 </style>
 </head>
@@ -974,6 +1025,17 @@
         <span class="project-tag">product design</span>
       </div>
     </div>
+
+    <div class="project-card" data-anim data-project="toolportal" onclick="showProject('toolportal')">
+      <div class="project-type">AI Platform</div>
+      <h3>VMG Tool Portal</h3>
+      <p class="project-desc">Internal AI-powered platform with 12 tools across creative intelligence, brand compliance, and content generation — built to operationalize AI across the agency.</p>
+      <div class="project-tags">
+        <span class="project-tag">AI tools</span>
+        <span class="project-tag">12 tools</span>
+        <span class="project-tag">Next.js</span>
+      </div>
+    </div>
   </div>
 
   <div class="project-viewer" id="projectViewer">
@@ -991,6 +1053,69 @@
           <a class="open-link" id="projectOpenLink" href="Presentation/vmg-architecture.html" target="_blank">Open in new tab &rarr;</a>
         </div>
         <iframe class="pres-iframe" id="projectIframe" src="" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <div class="project-detail-panel" id="projectDetailPanel">
+      <div class="detail-subtitle">AI Platform &middot; VMG Digital</div>
+      <h3>VMG Tool Portal</h3>
+      <p class="detail-body">
+        Internal platform I designed and built to operationalize AI across the agency. 12 tools spanning creative strategy, brand compliance, content generation, and media intelligence — each powered by different LLMs selected for task-specific strengths. The platform serves as the primary interface between VMG's teams and the AI systems I've deployed.
+      </p>
+
+      <div class="tool-showcase">
+        <div class="tool-item">
+          <div class="tool-label ai">AI Agent</div>
+          <div class="tool-name">Kraken Chat</div>
+          <div class="tool-desc">11-stage creative brief orchestrator — ingests unstructured briefs, runs them through specialized agents, outputs strategy-ready documents</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label ai">AI Agent</div>
+          <div class="tool-name">Agent Compare</div>
+          <div class="tool-desc">Blind A/B testing arena for AI agents — side-by-side evaluation with voting to identify which model configurations perform best</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label ai">AI Agent</div>
+          <div class="tool-name">Scriptwriter Room</div>
+          <div class="tool-desc">AI co-writing environment for video scripts — collaborative drafting with real-time agent assistance</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label ai">AI Agent</div>
+          <div class="tool-name">Blog Generator</div>
+          <div class="tool-desc">12-agent content pipeline — research, outline, draft, edit, SEO-optimize, and publish blog content at scale</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label creative">AI + Vision</div>
+          <div class="tool-name">Brand Checker</div>
+          <div class="tool-desc">Multimodal brand compliance — analyzes creative assets against brand guidelines using Gemini vision models</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label creative">AI + Vision</div>
+          <div class="tool-name">Adatomy</div>
+          <div class="tool-desc">Video ad intelligence — multimodal LLM analysis of ad creative with performance-linked recommendations</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label ai">AI Agent</div>
+          <div class="tool-name">Checkpoint Studio</div>
+          <div class="tool-desc">AI-powered creative concept validation — chat interface for testing strategic ideas against brief requirements</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label data">Data Processing</div>
+          <div class="tool-name">Schema Markup Generator</div>
+          <div class="tool-desc">Product data to Schema.org JSON-LD — structured SEO markup from raw product feeds</div>
+        </div>
+      </div>
+
+      <div class="detail-stack">
+        <span class="stack-chip">Next.js 16</span>
+        <span class="stack-chip">React 19</span>
+        <span class="stack-chip">TypeScript</span>
+        <span class="stack-chip">Supabase</span>
+        <span class="stack-chip">Gemini</span>
+        <span class="stack-chip">OpenAI</span>
+        <span class="stack-chip">Grok</span>
+        <span class="stack-chip">Zustand</span>
+        <span class="stack-chip">Tailwind CSS 4</span>
       </div>
     </div>
   </div>
@@ -1110,12 +1235,17 @@
   // ── Project switching ──
   const projects = {
     kraken: {
+      type: 'iframe',
       fname: 'vmg-architecture.html',
       src: 'Presentation/vmg-architecture.html',
     },
     atoll: {
+      type: 'iframe',
       fname: 'atoll-architecture.html',
       src: 'Presentation/atoll-architecture.html',
+    },
+    toolportal: {
+      type: 'detail',
     }
   };
 
@@ -1124,6 +1254,8 @@
     if (!proj) return;
 
     const viewer = document.getElementById('projectViewer');
+    const embedWrap = document.getElementById('projectEmbed');
+    const detailPanel = document.getElementById('projectDetailPanel');
     const iframe = document.getElementById('projectIframe');
     const fname = document.getElementById('projectFname');
     const openLink = document.getElementById('projectOpenLink');
@@ -1136,10 +1268,19 @@
     // Show viewer
     viewer.classList.add('visible');
 
-    // Update iframe
-    fname.textContent = proj.fname;
-    openLink.href = proj.src;
-    iframe.src = proj.src;
+    if (proj.type === 'iframe') {
+      // Show iframe, hide detail panel
+      embedWrap.style.display = 'block';
+      detailPanel.classList.remove('active');
+      fname.textContent = proj.fname;
+      openLink.href = proj.src;
+      iframe.src = proj.src;
+    } else {
+      // Show detail panel, hide iframe
+      embedWrap.style.display = 'none';
+      iframe.src = '';
+      detailPanel.classList.add('active');
+    }
 
     // Scroll viewer into view
     setTimeout(() => viewer.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);

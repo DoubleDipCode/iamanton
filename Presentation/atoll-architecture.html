@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atoll — Human-Agent Project Management</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#09090b;--surface:#111114;--surface-2:#18181b;--surface-3:#222228;
+    --border:#27272a;--border-hover:#3f3f46;
+    --text:#d4d4d8;--text-dim:#71717a;--text-bright:#fafafa;
+    --accent:#818cf8;--accent-2:#6366f1;--accent-bg:rgba(99,102,241,.08);
+    --green:#34d399;--green-bg:rgba(52,211,153,.1);
+    --amber:#fbbf24;--amber-bg:rgba(251,191,36,.1);
+    --cyan:#22d3ee;--cyan-bg:rgba(34,211,238,.08);
+    --rose:#fb7185;--rose-bg:rgba(251,113,133,.08);
+    --teal:#2dd4bf;--teal-bg:rgba(45,212,191,.08);
+    --human:#a78bfa;--human-bg:rgba(167,139,250,.08);
+    --agent:#34d399;--agent-bg:rgba(52,211,153,.06);
+  }
+  body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+
+  /* ── Slides ── */
+  .slides{scroll-snap-type:y mandatory;overflow-y:scroll;height:100vh}
+  .slide{scroll-snap-align:start;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:60px 80px;position:relative;overflow:hidden}
+  .slide-number{position:absolute;top:28px;right:36px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);opacity:.5}
+
+  /* ── Animations ── */
+  .anim{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim.visible{opacity:1;transform:translateY(0)}
+  .anim-left{opacity:0;transform:translateX(-30px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim-left.visible{opacity:1;transform:translateX(0)}
+  .anim-right{opacity:0;transform:translateX(30px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim-right.visible{opacity:1;transform:translateX(0)}
+  .anim-scale{opacity:0;transform:scale(.92);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .anim-scale.visible{opacity:1;transform:scale(1)}
+  .anim-fade{opacity:0;transition:opacity .8s ease}
+  .anim-fade.visible{opacity:1}
+  .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+  .d5{transition-delay:.5s}.d6{transition-delay:.6s}.d7{transition-delay:.7s}.d8{transition-delay:.8s}
+  .d9{transition-delay:.9s}.d10{transition-delay:1s}.d11{transition-delay:1.1s}
+
+  /* ── Typography ── */
+  .slide-label{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);font-weight:600;margin-bottom:16px}
+  .slide-title{font-size:42px;font-weight:800;color:var(--text-bright);letter-spacing:-.03em;line-height:1.15;margin-bottom:20px;max-width:800px}
+  .slide-subtitle{font-size:18px;color:var(--text);line-height:1.6;max-width:640px;font-weight:400}
+  .slide-subtitle strong{color:var(--text-bright);font-weight:600}
+
+  /* ── Nav dots ── */
+  .nav-dots{position:fixed;right:24px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100}
+  .nav-dot{width:8px;height:8px;border-radius:50%;background:var(--surface-3);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+  .nav-dot.active{background:var(--accent);border-color:var(--accent);box-shadow:0 0 8px rgba(129,140,248,.4)}
+  .nav-dot:hover{border-color:var(--accent)}
+
+  /* ── Title slide ── */
+  .title-slide{justify-content:center;align-items:flex-start}
+  .vmg-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:500;color:var(--text-dim);margin-bottom:32px}
+  .title-main{font-size:56px;font-weight:800;color:var(--text-bright);letter-spacing:-.04em;line-height:1.1;margin-bottom:16px}
+  .title-desc{font-size:20px;color:var(--text-dim);max-width:600px;line-height:1.5;margin-bottom:40px}
+  .title-stats{display:flex;gap:40px}
+  .title-stat-value{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--text-bright)}
+  .title-stat-label{font-size:12px;color:var(--text-dim);margin-top:2px}
+  .slide-footer{position:absolute;bottom:28px;left:80px;right:80px;display:flex;justify-content:space-between;font-size:11px;color:var(--text-dim);opacity:.5}
+
+  /* ── Context cards ── */
+  .context-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:32px;max-width:1000px}
+  .context-card{padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;transition:border-color .3s,box-shadow .3s}
+  .context-card:hover{border-color:var(--border-hover);box-shadow:0 4px 20px rgba(0,0,0,.3)}
+  .context-card-icon{font-size:22px;margin-bottom:12px}
+  .context-card-title{font-size:15px;font-weight:600;color:var(--text-bright);margin-bottom:8px}
+  .context-card-text{font-size:13px;color:var(--text-dim);line-height:1.6}
+
+  /* ── Architecture ── */
+  .arch-container{margin-top:28px;max-width:1100px;width:100%}
+
+  .arch-layer{padding:20px 24px;border-radius:10px;margin-bottom:16px;transition:box-shadow .4s}
+  .arch-layer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .arch-layer-name{font-size:16px;font-weight:700;color:var(--text-bright)}
+  .arch-layer-tech{font-family:'JetBrains Mono',monospace;font-size:12px;padding:4px 10px;border-radius:4px;font-weight:500;white-space:nowrap}
+  .arch-layer-desc{font-size:12px;color:var(--text-dim);line-height:1.5}
+
+  .arch-layer.web{background:var(--accent-bg);border:1px solid var(--accent-2)}
+  .arch-layer.web .arch-layer-tech{color:var(--accent);background:rgba(99,102,241,.12)}
+  .arch-layer.cli{background:var(--teal-bg);border:1px solid rgba(45,212,191,.3)}
+  .arch-layer.cli .arch-layer-tech{color:var(--teal);background:rgba(45,212,191,.12)}
+  .arch-layer.dal{background:var(--green-bg);border:1px solid rgba(52,211,153,.3)}
+  .arch-layer.dal .arch-layer-tech{color:var(--green);background:rgba(52,211,153,.12)}
+  .arch-layer.db{background:var(--amber-bg);border:1px solid rgba(251,191,36,.25)}
+  .arch-layer.db .arch-layer-tech{color:var(--amber);background:rgba(251,191,36,.12)}
+
+  .arch-connector{display:flex;justify-content:center;height:20px;margin-bottom:12px}
+  .arch-connector-line{width:2px;height:100%;background:linear-gradient(to bottom,var(--border-hover),var(--border))}
+  .arch-connector-split{display:flex;justify-content:center;align-items:center;gap:100px;height:20px;margin-bottom:12px;position:relative}
+  .arch-connector-split::before,.arch-connector-split::after{content:'';width:2px;height:100%;background:var(--border)}
+
+  /* ── Feature grid ── */
+  .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:32px;max-width:1100px}
+  .feature-card{padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;transition:all .3s;position:relative;overflow:hidden}
+  .feature-card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
+  .feature-card-icon{font-size:24px;margin-bottom:10px}
+  .feature-card-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:6px}
+  .feature-card-text{font-size:12px;color:var(--text-dim);line-height:1.5}
+  .feature-card-badge{position:absolute;top:12px;right:12px;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:3px}
+  .feature-card-badge.web{color:var(--accent);background:var(--accent-bg)}
+  .feature-card-badge.cli{color:var(--teal);background:var(--teal-bg)}
+  .feature-card-badge.both{color:var(--green);background:var(--green-bg)}
+
+  /* ── Dual interface ── */
+  .dual-container{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;max-width:1100px}
+  .dual-panel{padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .dual-panel-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .dual-panel-badge{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:4px}
+  .dual-panel-badge.human{color:var(--human);background:var(--human-bg);border:1px solid rgba(167,139,250,.2)}
+  .dual-panel-badge.agent{color:var(--agent);background:var(--agent-bg);border:1px solid rgba(52,211,153,.2)}
+  .dual-panel-title{font-size:15px;font-weight:600;color:var(--text-bright)}
+
+  .mock-terminal{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8}
+  .mock-terminal .prompt{color:var(--teal)}
+  .mock-terminal .cmd{color:var(--text-bright)}
+  .mock-terminal .output{color:var(--text-dim)}
+  .mock-terminal .success{color:var(--green)}
+  .mock-terminal .flag{color:var(--amber)}
+
+  .mock-ui{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:16px}
+  .mock-ui-bar{display:flex;gap:6px;margin-bottom:12px}
+  .mock-ui-dot{width:8px;height:8px;border-radius:50%;background:var(--surface-3)}
+  .mock-ui-content{display:flex;flex-direction:column;gap:8px}
+  .mock-board-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .mock-col{padding:6px}
+  .mock-col-title{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+  .mock-card{padding:6px 8px;background:var(--surface-2);border:1px solid var(--border);border-radius:4px;margin-bottom:4px;font-size:9px;color:var(--text);line-height:1.3}
+  .mock-card .agent-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--green);margin-right:3px}
+  .mock-card .human-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--human);margin-right:3px}
+  .mock-card .priority{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--rose);font-weight:600}
+
+  /* ── Phase roadmap ── */
+  .phase-track{display:flex;flex-direction:column;gap:4px;margin-top:28px;max-width:1000px}
+  .phase-row{display:flex;align-items:center;gap:16px;padding:10px 16px;border-radius:8px;transition:background .2s}
+  .phase-row:hover{background:var(--surface)}
+  .phase-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);font-weight:500;min-width:32px}
+  .phase-name{font-size:13px;font-weight:600;color:var(--text-bright);flex:1}
+  .phase-bar-container{width:200px;height:4px;background:var(--surface-3);border-radius:2px;overflow:hidden}
+  .phase-bar{height:100%;border-radius:2px;transition:width 1s cubic-bezier(.16,1,.3,1)}
+  .phase-bar.done{background:var(--green);width:100%}
+  .phase-bar.partial{background:var(--amber)}
+  .phase-bar.todo{background:var(--surface-3);width:0%}
+  .phase-status{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;min-width:60px;text-align:right}
+  .phase-status.done{color:var(--green)}
+  .phase-status.wip{color:var(--amber)}
+  .phase-status.todo{color:var(--text-dim)}
+
+  /* ── Agent collab ── */
+  .collab-container{margin-top:32px;max-width:1000px}
+  .collab-flow{display:flex;flex-direction:column;gap:12px}
+  .collab-step{display:flex;gap:16px;align-items:flex-start;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;transition:all .3s}
+  .collab-step:hover{border-color:var(--border-hover);transform:translateX(4px)}
+  .collab-step-num{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--accent);min-width:32px}
+  .collab-step-title{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:4px}
+  .collab-step-text{font-size:13px;color:var(--text-dim);line-height:1.6}
+  .collab-step-tags{display:flex;gap:4px;margin-top:8px}
+  .collab-tag{padding:2px 8px;font-size:9px;font-weight:600;border-radius:3px;text-transform:uppercase;letter-spacing:.04em}
+  .collab-tag.human{color:var(--human);background:var(--human-bg)}
+  .collab-tag.agent{color:var(--agent);background:var(--agent-bg)}
+  .collab-tag.system{color:var(--cyan);background:var(--cyan-bg)}
+
+  /* ── Design decisions ── */
+  .decision-list{margin-top:32px;max-width:800px;display:flex;flex-direction:column;gap:24px}
+  .decision-item{display:flex;gap:20px}
+  .decision-number{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--accent);min-width:36px}
+  .decision-title{font-size:16px;font-weight:600;color:var(--text-bright);margin-bottom:6px}
+  .decision-text{font-size:14px;color:var(--text-dim);line-height:1.6}
+  .decision-text strong{color:var(--text)}
+
+  /* ── Pulse animation ── */
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  .pulse{animation:pulse 2s ease-in-out infinite}
+
+  /* ── Typing animation for terminal ── */
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+  .cursor{display:inline-block;width:7px;height:13px;background:var(--teal);animation:blink 1s step-end infinite;vertical-align:middle;margin-left:2px}
+
+  /* ── Stagger animation for phase bars ── */
+  .phase-bar{width:0%;transition:width 1.2s cubic-bezier(.16,1,.3,1)}
+  .phase-bar.animate{transition-delay:var(--delay,0s)}
+
+  @media(max-width:900px){
+    .slide{padding:40px}
+    .title-main{font-size:36px}
+    .slide-title{font-size:30px}
+    .context-grid,.dual-container{grid-template-columns:1fr}
+    .feature-grid{grid-template-columns:1fr 1fr}
+    .mock-board-cols{grid-template-columns:repeat(2,1fr)}
+    .nav-dots{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="nav-dots" id="navDots"></div>
+
+<div class="slides" id="slides">
+
+  <!-- ═══ SLIDE 1: Title ═══ -->
+  <div class="slide title-slide" data-label="Title">
+    <span class="slide-number">01</span>
+    <div class="vmg-badge anim">VMG Digital &middot; Internal Tools</div>
+    <div class="title-main anim d1">Atoll</div>
+    <div class="title-desc anim d2">Project management where AI agents are first-class team members. One unified interface for humans and agents — web UI and CLI as equal citizens.</div>
+    <div class="title-stats anim d3">
+      <div><div class="title-stat-value">12</div><div class="title-stat-label">Build phases complete</div></div>
+      <div><div class="title-stat-value">2</div><div class="title-stat-label">Interfaces (Web + CLI)</div></div>
+      <div><div class="title-stat-value">4</div><div class="title-stat-label">Agent platforms supported</div></div>
+      <div><div class="title-stat-value">53</div><div class="title-stat-label">PRs merged</div></div>
+    </div>
+    <div class="slide-footer"><span>Anton Eliasson</span><span>March 2026</span></div>
+  </div>
+
+  <!-- ═══ SLIDE 2: Context ═══ -->
+  <div class="slide" data-label="Context">
+    <span class="slide-number">02</span>
+    <div class="slide-label anim">Background</div>
+    <div class="slide-title anim d1">From tools to teammates</div>
+    <div class="slide-subtitle anim d2">We're turning VMG's internal software tools into <strong>CLI tools with accompanying skills</strong>. Agents need a place to pick up work, report progress, and collaborate with humans. That's Atoll.</div>
+    <div class="context-grid">
+      <div class="context-card anim d3">
+        <div class="context-card-icon">&#9881;</div>
+        <div class="context-card-title">CLI-first internal tools</div>
+        <div class="context-card-text">Every internal tool we build gets a CLI interface alongside the web UI. This makes tools equally accessible to humans clicking through a dashboard and agents executing commands programmatically.</div>
+      </div>
+      <div class="context-card anim d4">
+        <div class="context-card-icon">&#129302;</div>
+        <div class="context-card-title">Agents as team members</div>
+        <div class="context-card-text">Claude Code, Codex, Gemini CLI, OpenClaw — each can be invited to an org, assigned tasks, comment on issues, and update status. They authenticate via API key and use the same CLI humans use.</div>
+      </div>
+      <div class="context-card anim d5">
+        <div class="context-card-icon">&#128065;</div>
+        <div class="context-card-title">Transparent collaboration</div>
+        <div class="context-card-text">The activity feed shows exactly what agents are doing — every status change, comment, and assignment logged with the agent's identity. Humans always know what happened and who did it.</div>
+      </div>
+      <div class="context-card anim d6">
+        <div class="context-card-icon">&#128640;</div>
+        <div class="context-card-title">Skill-based onboarding</div>
+        <div class="context-card-text">Agents onboard by running a single skill installer command that configures their auth, sets up the CLI, and gives them context about the org. Ready to work in under a minute.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3: Architecture ═══ -->
+  <div class="slide" data-label="Architecture" style="justify-content:flex-start;padding-top:48px;">
+    <span class="slide-number">03</span>
+    <div class="slide-label anim">System Architecture</div>
+    <div class="slide-title anim d1" style="font-size:32px;margin-bottom:16px">Shared DAL, dual consumers</div>
+    <div class="slide-subtitle anim d2" style="margin-bottom:24px;font-size:14px">Web UI and CLI are equal interfaces consuming the same Data Access Layer. No feature exists in one without the other.</div>
+
+    <div class="arch-container">
+      <!-- Web UI layer -->
+      <div class="arch-layer web anim d3">
+        <div class="arch-layer-header">
+          <div class="arch-layer-name">&#127760; Web UI — Humans</div>
+          <div class="arch-layer-tech">Next.js 16 + React 19 + shadcn/ui</div>
+        </div>
+        <div class="arch-layer-desc">Kanban board, list view, issue detail, dashboard, settings. Realtime updates via Supabase subscriptions. Command palette (Cmd+K) for power users.</div>
+      </div>
+
+      <div class="arch-connector-split anim d4">
+        <div style="width:2px;height:100%;background:var(--border)"></div>
+        <div style="position:absolute;font-size:10px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;background:var(--bg);padding:0 12px">Both consume</div>
+        <div style="width:2px;height:100%;background:var(--border)"></div>
+      </div>
+
+      <!-- CLI layer -->
+      <div class="arch-layer cli anim d4">
+        <div class="arch-layer-header">
+          <div class="arch-layer-name">&#9000; CLI — Humans + Agents</div>
+          <div class="arch-layer-tech">@atoll/cli &middot; TypeScript</div>
+        </div>
+        <div class="arch-layer-desc">Full command parity with web UI. <code style="color:var(--teal)">--json</code> flag for agent consumption. Human-readable defaults with colors and formatting. Issue CRUD, status changes, assignments, comments, filters.</div>
+      </div>
+
+      <div class="arch-connector anim d5"><div class="arch-connector-line pulse"></div></div>
+
+      <!-- DAL layer -->
+      <div class="arch-layer dal anim d5">
+        <div class="arch-layer-header">
+          <div class="arch-layer-name">&#128218; Shared Data Access Layer</div>
+          <div class="arch-layer-tech">TypeScript &middot; @atoll/types &middot; @atoll/schemas</div>
+        </div>
+        <div class="arch-layer-desc">Single source of business logic. Issues, comments, projects, milestones, activity, automation rules, notifications, members, teams, orgs. Both web and CLI import from the same DAL — feature parity is structural, not aspirational.</div>
+      </div>
+
+      <div class="arch-connector anim d6"><div class="arch-connector-line pulse"></div></div>
+
+      <!-- DB layer -->
+      <div class="arch-layer db anim d6">
+        <div class="arch-layer-header">
+          <div class="arch-layer-name">&#128451; Supabase</div>
+          <div class="arch-layer-tech">PostgreSQL + Auth + Realtime + RLS</div>
+        </div>
+        <div class="arch-layer-desc">Row-Level Security on every table. Org-scoped Realtime channels. Human sessions (email/OAuth) and agent API keys resolve to the same AuthContext. Webhook delivery engine for outbound events.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 4: Dual Interface ═══ -->
+  <div class="slide" data-label="Dual Interface">
+    <span class="slide-number">04</span>
+    <div class="slide-label anim">The Two Interfaces</div>
+    <div class="slide-title anim d1">Same platform, different surfaces</div>
+    <div class="slide-subtitle anim d2">Humans get visual board views with drag-and-drop. Agents get structured JSON over CLI. Both hit the same API.</div>
+
+    <div class="dual-container">
+      <!-- Human panel -->
+      <div class="dual-panel anim-left d3">
+        <div class="dual-panel-header">
+          <div class="dual-panel-badge human">Human</div>
+          <div class="dual-panel-title">Web UI — Kanban Board</div>
+        </div>
+        <div class="mock-ui">
+          <div class="mock-ui-bar">
+            <div class="mock-ui-dot" style="background:var(--rose)"></div>
+            <div class="mock-ui-dot" style="background:var(--amber)"></div>
+            <div class="mock-ui-dot" style="background:var(--green)"></div>
+          </div>
+          <div class="mock-board-cols">
+            <div class="mock-col">
+              <div class="mock-col-title">Backlog</div>
+              <div class="mock-card"><span class="priority">P2</span> Design token system<br><span class="human-dot"></span>Sarah</div>
+              <div class="mock-card"><span class="priority">P3</span> Audit unused deps<br><span class="agent-dot"></span>Claude</div>
+            </div>
+            <div class="mock-col">
+              <div class="mock-col-title">In Progress</div>
+              <div class="mock-card"><span class="priority">P1</span> Auth middleware<br><span class="agent-dot"></span>Codex</div>
+              <div class="mock-card"><span class="priority">P0</span> Fix RLS policies<br><span class="human-dot"></span>Anton</div>
+            </div>
+            <div class="mock-col">
+              <div class="mock-col-title">Review</div>
+              <div class="mock-card"><span class="priority">P1</span> Webhook HMAC<br><span class="agent-dot"></span>Claude</div>
+            </div>
+            <div class="mock-col">
+              <div class="mock-col-title">Done</div>
+              <div class="mock-card"><span class="priority">P1</span> Issue search<br><span class="human-dot"></span>Anton</div>
+              <div class="mock-card"><span class="priority">P2</span> Activity feed<br><span class="agent-dot"></span>Gemini</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent panel -->
+      <div class="dual-panel anim-right d4">
+        <div class="dual-panel-header">
+          <div class="dual-panel-badge agent">Agent</div>
+          <div class="dual-panel-title">CLI — Structured Commands</div>
+        </div>
+        <div class="mock-terminal" id="agentTerminal">
+          <div><span class="prompt">$</span> <span class="cmd">atoll issues list --status in_progress --json</span></div>
+          <div class="output">[{"id":"ANT-204","title":"Auth middleware","assignee":"codex","priority":"P1"}]</div>
+          <div style="margin-top:8px"><span class="prompt">$</span> <span class="cmd">atoll issues update ANT-204 --status done</span></div>
+          <div class="success">&#10003; ANT-204 moved to done</div>
+          <div style="margin-top:8px"><span class="prompt">$</span> <span class="cmd">atoll comment add ANT-204 <span class="flag">-m</span> "PR merged, all tests passing"</span></div>
+          <div class="success">&#10003; Comment added to ANT-204</div>
+          <div style="margin-top:8px"><span class="prompt">$</span> <span class="cmd">atoll issues create <span class="flag">-t</span> "Refactor DAL error handling" <span class="flag">-p</span> P2</span></div>
+          <div class="success">&#10003; Created ANT-220</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 5: Features ═══ -->
+  <div class="slide" data-label="Features" style="justify-content:flex-start;padding-top:48px;">
+    <span class="slide-number">05</span>
+    <div class="slide-label anim">Core Capabilities</div>
+    <div class="slide-title anim d1" style="font-size:34px">Everything you need to ship — for humans and agents</div>
+
+    <div class="feature-grid">
+      <div class="feature-card anim d2">
+        <div class="feature-card-badge both">Web + CLI</div>
+        <div class="feature-card-icon">&#128203;</div>
+        <div class="feature-card-title">Issues & Sub-tasks</div>
+        <div class="feature-card-text">Full CRUD with status workflow (Backlog → Todo → In Progress → Done → Cancelled), priorities P0-P3, assignees, labels, due dates, and one level of sub-task nesting.</div>
+      </div>
+      <div class="feature-card anim d3">
+        <div class="feature-card-badge web">Web</div>
+        <div class="feature-card-icon">&#128466;</div>
+        <div class="feature-card-title">Kanban Board</div>
+        <div class="feature-card-text">Drag-and-drop cards between status columns. Realtime updates — when an agent moves a card via CLI, the board updates live for all human viewers.</div>
+      </div>
+      <div class="feature-card anim d4">
+        <div class="feature-card-badge both">Web + CLI</div>
+        <div class="feature-card-icon">&#128172;</div>
+        <div class="feature-card-title">Comments & Threads</div>
+        <div class="feature-card-text">Threaded discussions on any issue. Markdown rendering. Author attribution distinguishes human vs agent contributors.</div>
+      </div>
+      <div class="feature-card anim d5">
+        <div class="feature-card-badge both">Web + CLI</div>
+        <div class="feature-card-icon">&#9889;</div>
+        <div class="feature-card-title">Automation Rules</div>
+        <div class="feature-card-text">Trigger → condition → action engine. Auto-assign on creation, auto-move on status change, post comments, add labels. Triggers include PR merge events.</div>
+      </div>
+      <div class="feature-card anim d6">
+        <div class="feature-card-badge both">Web + CLI</div>
+        <div class="feature-card-icon">&#128279;</div>
+        <div class="feature-card-title">GitHub Integration</div>
+        <div class="feature-card-text">OAuth-based GitHub connection. Link PRs to issues. Auto-close issues when linked PRs merge. Webhook-driven, near-instant.</div>
+      </div>
+      <div class="feature-card anim d7">
+        <div class="feature-card-badge both">Web + CLI</div>
+        <div class="feature-card-icon">&#127919;</div>
+        <div class="feature-card-title">Milestones & Projects</div>
+        <div class="feature-card-text">Group issues into milestones with target dates. Track progress as a percentage of completed issues. Organize work into projects within an org.</div>
+      </div>
+      <div class="feature-card anim d8">
+        <div class="feature-card-badge web">Web</div>
+        <div class="feature-card-icon">&#128226;</div>
+        <div class="feature-card-title">Activity Feed</div>
+        <div class="feature-card-text">Org-wide timeline of every action — who did what, when. Agent actions are clearly attributed. The source of truth for what's happened across the team.</div>
+      </div>
+      <div class="feature-card anim d9">
+        <div class="feature-card-badge both">Web + CLI</div>
+        <div class="feature-card-icon">&#128274;</div>
+        <div class="feature-card-title">Dual Auth Model</div>
+        <div class="feature-card-text">Humans: email/password + OAuth (Google, GitHub). Agents: API key generated during invite. Both resolve to the same AuthContext — RLS treats them identically.</div>
+      </div>
+      <div class="feature-card anim d10">
+        <div class="feature-card-badge both">Web + CLI</div>
+        <div class="feature-card-icon">&#128232;</div>
+        <div class="feature-card-title">Outbound Webhooks</div>
+        <div class="feature-card-text">HMAC-signed JSON payloads for platform events. Configure endpoints per org. Delivery engine with retry logic. Extend Atoll into any external workflow.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 6: Agent Collaboration Flow ═══ -->
+  <div class="slide" data-label="Agent Flow">
+    <span class="slide-number">06</span>
+    <div class="slide-label anim">How It Works</div>
+    <div class="slide-title anim d1">An agent's lifecycle in Atoll</div>
+    <div class="slide-subtitle anim d2">From invitation to production. A single workflow for onboarding any AI agent as a team member.</div>
+
+    <div class="collab-container">
+      <div class="collab-flow">
+        <div class="collab-step anim-left d3">
+          <div class="collab-step-num">01</div>
+          <div>
+            <div class="collab-step-title">Human invites agent to org</div>
+            <div class="collab-step-text">Admin names the agent, selects its platform (Claude Code, Codex, Gemini CLI, OpenClaw), and generates an API key + platform-specific skill installer command.</div>
+            <div class="collab-step-tags"><span class="collab-tag human">Human action</span></div>
+          </div>
+        </div>
+        <div class="collab-step anim-left d4">
+          <div class="collab-step-num">02</div>
+          <div>
+            <div class="collab-step-title">Agent runs skill installer</div>
+            <div class="collab-step-text">One command configures the agent's local environment — installs the Atoll CLI, sets up API key auth, and provides org context. Agent is ready to work.</div>
+            <div class="collab-step-tags"><span class="collab-tag agent">Agent action</span><span class="collab-tag system">Automated</span></div>
+          </div>
+        </div>
+        <div class="collab-step anim-left d5">
+          <div class="collab-step-num">03</div>
+          <div>
+            <div class="collab-step-title">Agent picks up assigned tasks</div>
+            <div class="collab-step-text"><code style="color:var(--teal);font-size:12px">atoll issues list --assignee @me --status todo --json</code> — agent queries for its assigned work, parses JSON output, and begins execution.</div>
+            <div class="collab-step-tags"><span class="collab-tag agent">Agent action</span></div>
+          </div>
+        </div>
+        <div class="collab-step anim-left d6">
+          <div class="collab-step-num">04</div>
+          <div>
+            <div class="collab-step-title">Agent updates progress in real-time</div>
+            <div class="collab-step-text">Status changes, comments, and sub-task completions flow through the CLI and appear instantly on the human's Kanban board via Supabase Realtime.</div>
+            <div class="collab-step-tags"><span class="collab-tag agent">Agent action</span><span class="collab-tag system">Realtime sync</span></div>
+          </div>
+        </div>
+        <div class="collab-step anim-left d7">
+          <div class="collab-step-num">05</div>
+          <div>
+            <div class="collab-step-title">Human reviews via activity feed</div>
+            <div class="collab-step-text">Every agent action is logged with full attribution. Humans see exactly what the agent did, when, and on which issue — no black box.</div>
+            <div class="collab-step-tags"><span class="collab-tag human">Human action</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 7: Design Decisions ═══ -->
+  <div class="slide" data-label="Design Decisions">
+    <span class="slide-number">07</span>
+    <div class="slide-label anim">Key Design Decisions</div>
+    <div class="slide-title anim d1">What shaped the architecture</div>
+    <div class="decision-list">
+      <div class="decision-item anim-left d2">
+        <div class="decision-number">01</div>
+        <div><div class="decision-title">CLI as equal citizen, not afterthought</div><div class="decision-text">Most project management tools add an API later. Atoll's CLI and web UI both consume the <strong>same Data Access Layer</strong> — feature parity is enforced by architecture, not policy. If it exists in the web UI, it exists in the CLI.</div></div>
+      </div>
+      <div class="decision-item anim-left d3">
+        <div class="decision-number">02</div>
+        <div><div class="decision-title">Unified auth context</div><div class="decision-text">Human sessions and agent API keys resolve to the <strong>same AuthContext type</strong>. RLS policies, permission checks, and activity logging don't care whether the actor is human or agent — they use the same code path.</div></div>
+      </div>
+      <div class="decision-item anim-left d4">
+        <div class="decision-number">03</div>
+        <div><div class="decision-title">Agent-agnostic by design</div><div class="decision-text">Atoll doesn't couple to any specific agent platform. The CLI is the universal interface — <strong>any agent that can run shell commands can use Atoll</strong>. Skill installers handle platform-specific config (Claude Code, Codex, Gemini CLI, OpenClaw).</div></div>
+      </div>
+      <div class="decision-item anim-left d5">
+        <div class="decision-number">04</div>
+        <div><div class="decision-title">Org-scoped Realtime for scale</div><div class="decision-text">Supabase Realtime channels are scoped by <code style="color:var(--teal)">org_id</code>, not broadcast globally. Each client only receives events for its own org. <strong>Filter-based routing</strong> keeps message volume manageable even with many concurrent boards.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 8: Build Progress ═══ -->
+  <div class="slide" data-label="Build Progress" style="justify-content:flex-start;padding-top:48px;">
+    <span class="slide-number">08</span>
+    <div class="slide-label anim">Build Progress</div>
+    <div class="slide-title anim d1" style="font-size:34px">12 phases — all complete</div>
+    <div class="slide-subtitle anim d2" style="margin-bottom:8px;font-size:14px">Architecture-driven sequence: foundation first, then data model, then parallel consumers (web + CLI), then integrations.</div>
+
+    <div class="phase-track" id="phaseTrack">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Phase data ──
+const phases = [
+  { num: 1, name: "Foundation", desc: "Supabase, schema, RLS, monorepo, DAL", status: "done", pct: 100 },
+  { num: 2, name: "Authentication", desc: "Email/password, OAuth, agent API keys, unified context", status: "done", pct: 100 },
+  { num: 3, name: "Organizations & Teams", desc: "Multi-tenant orgs, roles, teams, agent invites", status: "done", pct: 100 },
+  { num: 4, name: "Issues", desc: "CRUD, status workflow, priorities, labels, sub-tasks, search", status: "done", pct: 100 },
+  { num: 5, name: "Comments", desc: "Threaded, markdown, human/agent attribution", status: "done", pct: 100 },
+  { num: 6, name: "Web UI Views", desc: "Kanban, list view, detail, dashboard, Cmd+K", status: "done", pct: 100 },
+  { num: 7, name: "Activity & Notifications", desc: "Action logging, org-wide feed, in-app notifications", status: "done", pct: 100 },
+  { num: 8, name: "CLI", desc: "Full parity, --json for agents, colors for humans", status: "done", pct: 100 },
+  { num: 9, name: "Agent Onboarding", desc: "Skill installers for Claude Code, Codex, Gemini, OpenClaw", status: "done", pct: 100 },
+  { num: 10, name: "Real-time", desc: "Live board, issue detail, activity feed, notification count", status: "done", pct: 100 },
+  { num: 11, name: "Projects & Milestones", desc: "Issue grouping, target dates, progress tracking", status: "done", pct: 100 },
+  { num: 12, name: "Integrations & Automation", desc: "GitHub, auto-close, automation rules, outbound webhooks", status: "done", pct: 100 },
+];
+
+function renderPhases() {
+  const track = document.getElementById('phaseTrack');
+  track.innerHTML = phases.map((p, i) => {
+    const statusClass = p.status === 'done' ? 'done' : p.status === 'wip' ? 'wip' : 'todo';
+    const barClass = p.status === 'done' ? 'done' : p.status === 'wip' ? 'partial' : 'todo';
+    return `<div class="phase-row anim d${Math.min(3 + Math.floor(i/2), 11)}">
+      <div class="phase-num">${String(p.num).padStart(2, '0')}</div>
+      <div style="flex:1">
+        <div class="phase-name">${p.name}</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px">${p.desc}</div>
+      </div>
+      <div class="phase-bar-container">
+        <div class="phase-bar ${barClass} animate" id="bar-${i}" style="--delay:${0.1 * i}s;width:0%"></div>
+      </div>
+      <div class="phase-status ${statusClass}">${p.status === 'done' ? '&#10003; Done' : p.status === 'wip' ? 'In Progress' : 'Planned'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── Scroll animations ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // Trigger phase bar animations
+      if (e.target.closest('[data-label="Build Progress"]')) {
+        setTimeout(() => {
+          phases.forEach((p, i) => {
+            const bar = document.getElementById(`bar-${i}`);
+            if (bar) bar.style.width = p.pct + '%';
+          });
+        }, 300);
+      }
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+function initAnimations() {
+  document.querySelectorAll('.anim, .anim-left, .anim-right, .anim-scale, .anim-fade').forEach(el => observer.observe(el));
+}
+
+// ── Nav dots ──
+const slideEls = () => document.querySelectorAll('.slide');
+let activeSlide = 0;
+
+function renderDots() {
+  document.getElementById('navDots').innerHTML = Array.from({length: slideEls().length}, (_, i) =>
+    `<div class="nav-dot ${i===0?'active':''}" onclick="goToSlide(${i})" title="${slideEls()[i].dataset.label}"></div>`
+  ).join('');
+}
+
+function goToSlide(i) { slideEls()[i].scrollIntoView({ behavior:'smooth' }); }
+
+function updateActiveDot() {
+  const s = document.getElementById('slides');
+  const current = Math.round(s.scrollTop / window.innerHeight);
+  if (current !== activeSlide) {
+    activeSlide = current;
+    document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i===current));
+  }
+}
+
+document.getElementById('slides').addEventListener('scroll', updateActiveDot);
+
+document.addEventListener('keydown', e => {
+  const total = slideEls().length;
+  if (['ArrowDown',' ','ArrowRight'].includes(e.key)) { e.preventDefault(); if (activeSlide < total-1) goToSlide(activeSlide+1); }
+  if (['ArrowUp','ArrowLeft'].includes(e.key)) { e.preventDefault(); if (activeSlide > 0) goToSlide(activeSlide-1); }
+});
+
+renderPhases();
+renderDots();
+initAnimations();
+</script>
+</body>
+</html>
