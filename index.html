@@ -1036,6 +1036,17 @@
         <span class="project-tag">Next.js</span>
       </div>
     </div>
+
+    <div class="project-card" data-anim data-project="agentgtm" onclick="showProject('agentgtm')">
+      <div class="project-type">AI + CLI Platform</div>
+      <h3>Agent-GTM</h3>
+      <p class="project-desc">Lead generation platform with AI-powered competitive intelligence, CLI tooling for autonomous agents, and automated outreach — built for human-agent parity.</p>
+      <div class="project-tags">
+        <span class="project-tag">Gemini AI</span>
+        <span class="project-tag">CLI skills</span>
+        <span class="project-tag">multi-tenant SaaS</span>
+      </div>
+    </div>
   </div>
 
   <div class="project-viewer" id="projectViewer">
@@ -1056,13 +1067,12 @@
       </div>
     </div>
 
-    <div class="project-detail-panel" id="projectDetailPanel">
+    <div class="project-detail-panel" id="detailToolportal">
       <div class="detail-subtitle">AI Platform &middot; VMG Digital</div>
       <h3>VMG Tool Portal</h3>
       <p class="detail-body">
         Internal platform I designed and built to operationalize AI across the agency. 12 tools spanning creative strategy, brand compliance, content generation, and media intelligence — each powered by different LLMs selected for task-specific strengths. The platform serves as the primary interface between VMG's teams and the AI systems I've deployed.
       </p>
-
       <div class="tool-showcase">
         <div class="tool-item">
           <div class="tool-label ai">AI Agent</div>
@@ -1105,7 +1115,6 @@
           <div class="tool-desc">Product data to Schema.org JSON-LD — structured SEO markup from raw product feeds</div>
         </div>
       </div>
-
       <div class="detail-stack">
         <span class="stack-chip">Next.js 16</span>
         <span class="stack-chip">React 19</span>
@@ -1116,6 +1125,67 @@
         <span class="stack-chip">Grok</span>
         <span class="stack-chip">Zustand</span>
         <span class="stack-chip">Tailwind CSS 4</span>
+      </div>
+    </div>
+
+    <div class="project-detail-panel" id="detailAgentgtm">
+      <div class="detail-subtitle">AI Lead Gen + CLI &middot; Agent-GTM</div>
+      <h3>Agent-GTM (LeadFlow)</h3>
+      <p class="detail-body">
+        Multi-tenant SaaS platform for automated lead generation and competitive intelligence. Core design principle: human-agent parity — every capability accessible via the web UI is equally accessible via CLI commands with JSON skill manifests, so AI agents can discover and use the platform autonomously. Agents scrape prospects, run Gemini-powered competitive analysis, and push qualified leads to outreach platforms.
+      </p>
+      <div class="tool-showcase">
+        <div class="tool-item">
+          <div class="tool-label ai">AI + Gemini</div>
+          <div class="tool-name">Competitive Whitespace</div>
+          <div class="tool-desc">Identifies 3-5 strategic gaps in competitor positioning, ranked by impact — with execution ideas, best formats, and confidence scores</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label ai">AI + Gemini</div>
+          <div class="tool-name">Strategic Recommendation</div>
+          <div class="tool-desc">Synthesizes all competitive intelligence into a single best-move recommendation with reasoning and confidence scoring</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label creative">AI + Vision</div>
+          <div class="tool-name">Competitor Ad Analysis</div>
+          <div class="tool-desc">Multimodal analysis of competitor ad creatives — format distribution, CTA patterns, messaging themes, cross-competitor insights</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label ai">AI + Gemini</div>
+          <div class="tool-name">Messaging Taxonomy</div>
+          <div class="tool-desc">Extracts dominant and secondary messaging themes per competitor — surfaces consensus vs. differentiation opportunities</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label media">CLI + Skills</div>
+          <div class="tool-name">17 CLI Commands</div>
+          <div class="tool-desc">Full CLI with JSON skill manifests — agents discover capabilities via <code style="color:var(--green)">kiln skills list</code> and execute any operation autonomously</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label data">Lead Pipeline</div>
+          <div class="tool-name">Prospect Scraper</div>
+          <div class="tool-desc">Automated LinkedIn scraping with configurable filters — job titles, locations, company sizes, industries — pushes to SmartLead for outreach</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label ai">AI + Gemini</div>
+          <div class="tool-name">Brand Role Detection</div>
+          <div class="tool-desc">Identifies brand's role in category (innovator, executor, defender) from audit data — with rationale and confidence</div>
+        </div>
+        <div class="tool-item">
+          <div class="tool-label ai">AI + Gemini</div>
+          <div class="tool-name">Goal Conflict Detection</div>
+          <div class="tool-desc">Flags conflicting messaging goals before they reach market — severity scoring with mitigation strategies</div>
+        </div>
+      </div>
+      <div class="detail-stack">
+        <span class="stack-chip">Next.js 16</span>
+        <span class="stack-chip">Commander.js CLI</span>
+        <span class="stack-chip">Gemini 2.0 Flash</span>
+        <span class="stack-chip">Clerk Auth</span>
+        <span class="stack-chip">Supabase</span>
+        <span class="stack-chip">Zod 4</span>
+        <span class="stack-chip">SmartLead</span>
+        <span class="stack-chip">Playwright</span>
+        <span class="stack-chip">npm Workspaces</span>
       </div>
     </div>
   </div>
@@ -1244,9 +1314,8 @@
       fname: 'atoll-architecture.html',
       src: 'Presentation/atoll-architecture.html',
     },
-    toolportal: {
-      type: 'detail',
-    }
+    toolportal: { type: 'detail', panelId: 'detailToolportal' },
+    agentgtm: { type: 'detail', panelId: 'detailAgentgtm' },
   };
 
   function showProject(key) {
@@ -1255,7 +1324,6 @@
 
     const viewer = document.getElementById('projectViewer');
     const embedWrap = document.getElementById('projectEmbed');
-    const detailPanel = document.getElementById('projectDetailPanel');
     const iframe = document.getElementById('projectIframe');
     const fname = document.getElementById('projectFname');
     const openLink = document.getElementById('projectOpenLink');
@@ -1265,21 +1333,21 @@
     const activeCard = document.querySelector(`.project-card[data-project="${key}"]`);
     if (activeCard) activeCard.classList.add('active');
 
+    // Hide all detail panels
+    document.querySelectorAll('.project-detail-panel').forEach(p => p.classList.remove('active'));
+
     // Show viewer
     viewer.classList.add('visible');
 
     if (proj.type === 'iframe') {
-      // Show iframe, hide detail panel
       embedWrap.style.display = 'block';
-      detailPanel.classList.remove('active');
       fname.textContent = proj.fname;
       openLink.href = proj.src;
       iframe.src = proj.src;
     } else {
-      // Show detail panel, hide iframe
       embedWrap.style.display = 'none';
       iframe.src = '';
-      detailPanel.classList.add('active');
+      document.getElementById(proj.panelId).classList.add('active');
     }
 
     // Scroll viewer into view
