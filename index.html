@@ -204,6 +204,43 @@
   .prev-roles .prev-role .title { color: var(--text); }
   .prev-roles .prev-role .year { color: var(--text-dim); font-size: 11px; }
 
+  /* ── CASE STUDIES ── */
+  .cases-grid { display: grid; gap: 32px; margin-top: 20px; }
+  .case-card {
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 8px; padding: 32px;
+    opacity: 0; transform: translateY(20px); transition: all 0.6s ease;
+    position: relative;
+  }
+  .case-card.visible { opacity: 1; transform: translateY(0); }
+  .case-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .case-card:hover::before { opacity: 1; }
+  .case-card:nth-child(1)::before { background: linear-gradient(90deg, var(--blue), var(--green)); }
+  .case-card:nth-child(2)::before { background: linear-gradient(90deg, var(--green), var(--amber)); }
+  .case-card:nth-child(3)::before { background: linear-gradient(90deg, var(--amber), var(--purple)); }
+  .case-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .case-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+    padding: 3px 10px; border-radius: 3px; font-family: var(--font-mono);
+  }
+  .case-card:nth-child(1) .case-label { color: var(--blue); background: rgba(83,189,250,0.1); border: 1px solid rgba(83,189,250,0.2); }
+  .case-card:nth-child(2) .case-label { color: var(--green); background: rgba(0,229,153,0.1); border: 1px solid rgba(0,229,153,0.2); }
+  .case-card:nth-child(3) .case-label { color: var(--amber); background: rgba(255,180,84,0.1); border: 1px solid rgba(255,180,84,0.2); }
+  .case-title {
+    color: var(--text-bright); font-size: 17px; font-weight: 600;
+    font-family: var(--font-mono);
+  }
+  .case-body { font-family: var(--font-sans); font-size: 14px; color: var(--text); line-height: 1.8; }
+  .case-body p { margin-bottom: 12px; }
+  .case-body p:last-child { margin-bottom: 0; }
+  .case-outcome {
+    margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+    font-family: var(--font-mono); font-size: 12px; color: var(--green);
+  }
+
   /* ── AGENT SECTION ── */
   .diagram-container {
     margin-top: 20px; opacity: 0; transform: translateY(20px); transition: all 0.8s ease;
@@ -502,7 +539,7 @@
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
     section { padding: 100px 20px 60px; }
-    .about-grid, .fit-grid, .principles-grid { grid-template-columns: 1fr; }
+    .about-grid, .fit-grid, .principles-grid, .cases-grid { grid-template-columns: 1fr; }
     .stat-row { flex-wrap: wrap; gap: 20px; }
     .terminal-body { padding: 16px; font-size: 12px; }
     h2 { font-size: 22px; }
@@ -609,6 +646,7 @@
       <a href="#hero">home</a>
       <a href="#about">about</a>
       <a href="#experience">experience</a>
+      <a href="#cases">how I work</a>
       <a href="#agents">agents</a>
       <a href="#sierra">sierra</a>
       <a href="#projects">projects</a>
@@ -737,6 +775,54 @@
       <div class="timeline-tags" style="margin-top:16px">
         <span class="tag">Techstars Startup Mentor (2020–2022)</span>
       </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ HOW I WORK — CASE STUDIES ═══ -->
+<section id="cases">
+  <div class="section-label">// how_i_work</div>
+  <h2>How I Work</h2>
+  <div class="cases-grid">
+
+    <div class="case-card" data-anim>
+      <div class="case-header">
+        <span class="case-label">Enterprise navigation</span>
+        <span class="case-title">Turning Meta into Shakr's growth engine</span>
+      </div>
+      <div class="case-body">
+        <p>When I started building the Meta relationship, we were a small Korean startup with no brand recognition. I began with Meta's partnerships team in Korea, working with their local partnership manager to get us a Facebook Marketing Partner badge. That was table stakes for credibility.</p>
+        <p>From there, I expanded the relationship through Meta's Singapore-based team. The key insight was aligning our narrative with theirs. Meta's partnerships and sales teams had specific revenue targets around Stories Ads and Video Ads adoption. We were one of the few partners with a product that directly fulfilled that narrative. So instead of pitching Shakr as a vendor, I positioned us as an instrument of their own goals. Their partnerships team could go to their sales team and say: "You have video revenue targets to hit. Here's a partner that helps you get there."</p>
+        <p>To build awareness, we ran a hackathon-style event in Seoul where Meta invited their clients to try our platform hands-on. It drove enough Stories and Video Ads adoption that Meta expanded the program themselves, to over 20 events across APAC, London, and New York. We didn't ask for that scale. They saw the ROI and ran with it.</p>
+      </div>
+      <div class="case-outcome">// outcome &rarr; Meta became Shakr's single largest revenue driver. 600+ clients served through the program.</div>
+    </div>
+
+    <div class="case-card" data-anim>
+      <div class="case-header">
+        <span class="case-label">Shipping under pressure</span>
+        <span class="case-title">Four weeks to shift a partnership</span>
+      </div>
+      <div class="case-body">
+        <p>VMG had an important partnership meeting with LinkedIn's team coming up in four weeks. We needed to change how LinkedIn perceived us: not an outsourced execution shop, but a strategic partner they'd trust with their clients. The vehicle was to build a product that proved we could think, not just produce.</p>
+        <p>We built a web app that uses AI to analyze a brand's ads from the LinkedIn Ad Library, automatically identifies their competitors, runs the same analysis on them, and compares. It surfaces gaps, green fields, and concrete recommendations. The creative strategy team wrote a PRD that was around a hundred pages of requirements. My job was to cut it down to what we could actually ship in four weeks without losing the thing that would make LinkedIn care.</p>
+        <p>I framed it as phase one versus phase two: what do we need in the room for this meeting, and what can come after? We cut features where the gap between build complexity and demo impact was largest. Two of us built the entire thing. We hit the deadline with one day to spare.</p>
+      </div>
+      <div class="case-outcome">// outcome &rarr; LinkedIn's response: they "desperately need partners who think like this." Follow-up meetings now underway to roll the tool out to their sales teams and clients.</div>
+    </div>
+
+    <div class="case-card" data-anim>
+      <div class="case-header">
+        <span class="case-label">Cross-functional adoption</span>
+        <span class="case-title">Building AI pods across four departments</span>
+      </div>
+      <div class="case-body">
+        <p>When I joined VMG, the challenge wasn't just building AI tools. It was getting an organization of 40-50 people to actually want them. People were worried about being replaced. Rather than pushing tools top-down, I designed a system where each department drives its own adoption.</p>
+        <p>We started with the customer success team, then expanded to Ad Ops, two creative studios, a creative strategy team, a media team, and a go-to-market team. The first step was mapping the entire campaign lifecycle, from inception to delivery, identifying exactly what happens at each stage and where AI-enabled automation would have the highest impact. That became a prioritized roadmap.</p>
+        <p>Each department has an AI pod champion who leads the process internally. They work with their team to fill out a PRD template detailing the inputs, the process, and the desired output. Then my technical team builds it. The effect is that each team feels ownership over the tools. They defined the problem, they wrote the spec, and the solution works the way they described. We've grown from ad-hoc freelancers to bringing dedicated technical people onto the team full-time.</p>
+      </div>
+      <div class="case-outcome">// outcome &rarr; 7-person AI team across 4 departments. Internal tools now being commercialized as external products.</div>
     </div>
 
   </div>
