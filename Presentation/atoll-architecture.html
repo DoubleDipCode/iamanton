@@ -207,7 +207,7 @@
     <span class="slide-number">01</span>
     <div class="vmg-badge anim">VMG Digital &middot; Internal Tools</div>
     <div class="title-main anim d1">Agent-Assisted Project Ops</div>
-    <div class="title-desc anim d2">Rethinking how our teams manage work alongside AI. Agents are first-class team members — one unified interface for humans and agents, web UI and CLI as equal citizens.</div>
+    <div class="title-desc anim d2">Agents are team members, not tools. One interface for humans and agents. Web UI and CLI as equal citizens.</div>
     <div class="title-stats anim d3">
       <div><div class="title-stat-value">12</div><div class="title-stat-label">Build phases complete</div></div>
       <div><div class="title-stat-value">2</div><div class="title-stat-label">Interfaces (Web + CLI)</div></div>
@@ -232,12 +232,12 @@
       <div class="context-card anim d4">
         <div class="context-card-icon">&#129302;</div>
         <div class="context-card-title">Agents as team members</div>
-        <div class="context-card-text">Claude Code, Codex, Gemini CLI, OpenClaw — each can be invited to an org, assigned tasks, comment on issues, and update status. They authenticate via API key and use the same CLI humans use.</div>
+        <div class="context-card-text">Claude Code, Codex, Gemini CLI, OpenClaw. Each can be invited to an org, assigned tasks, comment on issues, and update status. They authenticate via API key and use the same CLI humans use.</div>
       </div>
       <div class="context-card anim d5">
         <div class="context-card-icon">&#128065;</div>
         <div class="context-card-title">Transparent collaboration</div>
-        <div class="context-card-text">The activity feed shows exactly what agents are doing — every status change, comment, and assignment logged with the agent's identity. Humans always know what happened and who did it.</div>
+        <div class="context-card-text">The activity feed shows what agents are doing. Every status change, comment, and assignment logged with the agent's identity. Humans know what happened and who did it.</div>
       </div>
       <div class="context-card anim d6">
         <div class="context-card-icon">&#128640;</div>
@@ -287,7 +287,7 @@
           <div class="arch-layer-name">&#128218; Shared Data Access Layer</div>
           <div class="arch-layer-tech">TypeScript &middot; @atoll/types &middot; @atoll/schemas</div>
         </div>
-        <div class="arch-layer-desc">Single source of business logic. Issues, comments, projects, milestones, activity, automation rules, notifications, members, teams, orgs. Both web and CLI import from the same DAL — feature parity is structural, not aspirational.</div>
+        <div class="arch-layer-desc">Single source of business logic. Issues, comments, projects, milestones, activity, automation rules, notifications, members, teams, orgs. Both web and CLI import from the same DAL. Feature parity is enforced by architecture.</div>
       </div>
 
       <div class="arch-connector anim d6"><div class="arch-connector-line pulse"></div></div>
@@ -371,7 +371,7 @@
   <div class="slide" data-label="Features" style="justify-content:flex-start;padding-top:48px;">
     <span class="slide-number">05</span>
     <div class="slide-label anim">Core Capabilities</div>
-    <div class="slide-title anim d1" style="font-size:34px">Everything you need to ship — for humans and agents</div>
+    <div class="slide-title anim d1" style="font-size:34px">Everything you need to ship, for humans and agents</div>
 
     <div class="feature-grid">
       <div class="feature-card anim d2">
@@ -384,7 +384,7 @@
         <div class="feature-card-badge web">Web</div>
         <div class="feature-card-icon">&#128466;</div>
         <div class="feature-card-title">Kanban Board</div>
-        <div class="feature-card-text">Drag-and-drop cards between status columns. Realtime updates — when an agent moves a card via CLI, the board updates live for all human viewers.</div>
+        <div class="feature-card-text">Drag-and-drop cards between status columns. When an agent moves a card via CLI, the board updates live for all human viewers.</div>
       </div>
       <div class="feature-card anim d4">
         <div class="feature-card-badge both">Web + CLI</div>
@@ -414,13 +414,13 @@
         <div class="feature-card-badge web">Web</div>
         <div class="feature-card-icon">&#128226;</div>
         <div class="feature-card-title">Activity Feed</div>
-        <div class="feature-card-text">Org-wide timeline of every action — who did what, when. Agent actions are clearly attributed. The source of truth for what's happened across the team.</div>
+        <div class="feature-card-text">Org-wide timeline of every action: who did what, when. Agent actions are attributed. Source of truth for what's happened across the team.</div>
       </div>
       <div class="feature-card anim d9">
         <div class="feature-card-badge both">Web + CLI</div>
         <div class="feature-card-icon">&#128274;</div>
         <div class="feature-card-title">Dual Auth Model</div>
-        <div class="feature-card-text">Humans: email/password + OAuth (Google, GitHub). Agents: API key generated during invite. Both resolve to the same AuthContext — RLS treats them identically.</div>
+        <div class="feature-card-text">Humans: email/password + OAuth (Google, GitHub). Agents: API key generated during invite. Both resolve to the same AuthContext. RLS treats them identically.</div>
       </div>
       <div class="feature-card anim d10">
         <div class="feature-card-badge both">Web + CLI</div>
@@ -452,7 +452,7 @@
           <div class="collab-step-num">02</div>
           <div>
             <div class="collab-step-title">Agent runs skill installer</div>
-            <div class="collab-step-text">One command configures the agent's local environment — installs the project CLI, sets up API key auth, and provides org context. Agent is ready to work.</div>
+            <div class="collab-step-text">One command configures the agent's local environment: installs the project CLI, sets up API key auth, and provides org context. Agent is ready to work.</div>
             <div class="collab-step-tags"><span class="collab-tag agent">Agent action</span><span class="collab-tag system">Automated</span></div>
           </div>
         </div>
@@ -460,7 +460,7 @@
           <div class="collab-step-num">03</div>
           <div>
             <div class="collab-step-title">Agent picks up assigned tasks</div>
-            <div class="collab-step-text"><code style="color:var(--teal);font-size:12px">atoll issues list --assignee @me --status todo --json</code> — agent queries for its assigned work, parses JSON output, and begins execution.</div>
+            <div class="collab-step-text"><code style="color:var(--teal);font-size:12px">atoll issues list --assignee @me --status todo --json</code>. Agent queries for its assigned work, parses JSON output, and begins execution.</div>
             <div class="collab-step-tags"><span class="collab-tag agent">Agent action</span></div>
           </div>
         </div>
@@ -476,7 +476,7 @@
           <div class="collab-step-num">05</div>
           <div>
             <div class="collab-step-title">Human reviews via activity feed</div>
-            <div class="collab-step-text">Every agent action is logged with full attribution. Humans see exactly what the agent did, when, and on which issue — no black box.</div>
+            <div class="collab-step-text">Every agent action is logged with full attribution. Humans see what the agent did, when, and on which issue. No black box.</div>
             <div class="collab-step-tags"><span class="collab-tag human">Human action</span></div>
           </div>
         </div>
@@ -496,11 +496,11 @@
       </div>
       <div class="decision-item anim-left d3">
         <div class="decision-number">02</div>
-        <div><div class="decision-title">Unified auth context</div><div class="decision-text">Human sessions and agent API keys resolve to the <strong>same AuthContext type</strong>. RLS policies, permission checks, and activity logging don't care whether the actor is human or agent — they use the same code path.</div></div>
+        <div><div class="decision-title">Unified auth context</div><div class="decision-text">Human sessions and agent API keys resolve to the <strong>same AuthContext type</strong>. RLS policies, permission checks, and activity logging use the same code path regardless of whether the actor is human or agent.</div></div>
       </div>
       <div class="decision-item anim-left d4">
         <div class="decision-number">03</div>
-        <div><div class="decision-title">Agent-agnostic by design</div><div class="decision-text">The system doesn't couple to any specific agent framework. The CLI is the universal interface — <strong>any agent that can run shell commands can use it</strong>. Skill installers handle platform-specific config (Claude Code, Codex, Gemini CLI, OpenClaw).</div></div>
+        <div><div class="decision-title">Agent-agnostic by design</div><div class="decision-text">The system doesn't couple to any specific agent framework. The CLI is the universal interface. <strong>Any agent that can run shell commands can use it.</strong> Skill installers handle platform-specific config (Claude Code, Codex, Gemini CLI, OpenClaw).</div></div>
       </div>
       <div class="decision-item anim-left d5">
         <div class="decision-number">04</div>
@@ -513,7 +513,7 @@
   <div class="slide" data-label="Build Progress" style="justify-content:flex-start;padding-top:48px;">
     <span class="slide-number">08</span>
     <div class="slide-label anim">Build Progress</div>
-    <div class="slide-title anim d1" style="font-size:34px">12 phases — all complete</div>
+    <div class="slide-title anim d1" style="font-size:34px">12 phases, all complete</div>
     <div class="slide-subtitle anim d2" style="margin-bottom:8px;font-size:14px">Architecture-driven sequence: foundation first, then data model, then parallel consumers (web + CLI), then integrations.</div>
 
     <div class="phase-track" id="phaseTrack">

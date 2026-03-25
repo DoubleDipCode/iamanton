@@ -246,7 +246,7 @@
     <span class="slide-number">01</span>
     <div class="vmg-badge anim">VMG Digital &middot; AI & Automation</div>
     <div class="title-main anim d1">Creative Brief Orchestrator</div>
-    <div class="title-desc anim d2">Multi-agent system built to fix our brief quality problem. 1 orchestrator, 11 specialized sub-agents, 3 LLMs — transforming raw client briefs into structured campaign strategy.</div>
+    <div class="title-desc anim d2">Multi-agent system built to fix our brief quality problem. 1 orchestrator, 11 specialized sub-agents, 3 LLMs. Raw client briefs go in, structured campaign strategy comes out.</div>
     <div class="title-stats anim d3">
       <div><div class="title-stat-value">11</div><div class="title-stat-label">Specialized agents</div></div>
       <div><div class="title-stat-value">3</div><div class="title-stat-label">LLMs (task-matched)</div></div>
@@ -261,12 +261,12 @@
     <span class="slide-number">02</span>
     <div class="slide-label anim">The Problem</div>
     <div class="slide-title anim d1">Creative briefs are broken</div>
-    <div class="slide-subtitle anim d2">The recurring bottleneck in digital creative campaigns isn't production — it's what comes before it.</div>
+    <div class="slide-subtitle anim d2">The bottleneck in digital creative campaigns is what comes before production.</div>
     <div class="problem-grid">
       <div class="problem-card anim d3"><div class="problem-card-title">Incomplete inputs</div><div class="problem-card-text">Client briefs arrive missing audience specificity, competitive context, and measurable objectives. Strategists spend days manually reconstructing what should have been there.</div></div>
       <div class="problem-card anim d4"><div class="problem-card-title">Hidden assumptions</div><div class="problem-card-text">Briefs are full of unstated beliefs about the audience, the product, and the platform. These go unchallenged until creative is already in production.</div></div>
       <div class="problem-card anim d5"><div class="problem-card-title">No structured pipeline</div><div class="problem-card-text">The path from brief to creative direction relies on individual strategist judgment with no consistent analytical framework across campaigns.</div></div>
-      <div class="problem-card anim d6"><div class="problem-card-title">Time cost</div><div class="problem-card-text">Strategists spend days manually doing work that follows repeatable analytical patterns — assumption testing, persona building, KPI structuring, competitive mapping.</div></div>
+      <div class="problem-card anim d6"><div class="problem-card-title">Time cost</div><div class="problem-card-text">Strategists spend days on repeatable analytical patterns: assumption testing, persona building, KPI structuring, competitive mapping.</div></div>
     </div>
   </div>
 
@@ -317,7 +317,7 @@
         <div style="font-size:20px">&#128451;</div>
         <div>
           <div class="arch-db-name">Supabase — Shared Persistence</div>
-          <div class="arch-db-desc">Source of truth for all brief data and agent outputs. Sub-agents read context and write outputs directly — bypassing the orchestrator to prevent lossy summarization.</div>
+          <div class="arch-db-desc">Source of truth for all brief data and agent outputs. Sub-agents read context and write outputs here, bypassing the orchestrator to prevent lossy summarization.</div>
         </div>
       </div>
     </div>
@@ -328,7 +328,7 @@
     <span class="slide-number">04</span>
     <div class="slide-label anim">Model Selection</div>
     <div class="slide-title anim d1">Three models, three reasons</div>
-    <div class="slide-subtitle anim d2">Each model selected for a specific capability advantage — not benchmarks.</div>
+    <div class="slide-subtitle anim d2">Each model selected for a specific capability advantage, not benchmarks.</div>
     <div class="model-cards">
       <div class="model-card anim-left d3">
         <div class="model-card-role">Ingestion Layer</div>
@@ -339,7 +339,7 @@
       <div class="model-card anim d4">
         <div class="model-card-role">Orchestration</div>
         <div class="model-card-name gpt">GPT-5.4</div>
-        <div class="model-card-why">Strong reasoning and instruction-following for routing decisions and conversational management. The orchestrator's job is lightweight — it routes, tracks state, and manages the user conversation. It never processes brief content.</div>
+        <div class="model-card-why">Strong reasoning and instruction-following for routing decisions and conversational management. The orchestrator's job is lightweight: route, track state, manage the user conversation. It never processes brief content.</div>
         <div class="model-card-stats"><div class="model-stat">Selected for: <strong>reasoning & routing</strong></div></div>
       </div>
       <div class="model-card anim-right d5">
@@ -367,7 +367,7 @@
       </div>
       <div class="decision-item anim-left d3">
         <div class="decision-number">02</div>
-        <div><div class="decision-title">Database as output channel</div><div class="decision-text">Passing sub-agent outputs back through the orchestrator caused <strong>lossy summarization</strong>. The orchestrator would rewrite or condense details. Sub-agents now write directly to Supabase. The orchestrator only receives completion signals — never content.</div></div>
+        <div><div class="decision-title">Database as output channel</div><div class="decision-text">Passing sub-agent outputs back through the orchestrator caused <strong>lossy summarization</strong>. The orchestrator would rewrite or condense details. Sub-agents now write to Supabase. The orchestrator only receives completion signals, never content.</div></div>
       </div>
       <div class="decision-item anim-left d4">
         <div class="decision-number">03</div>
@@ -384,13 +384,13 @@
   <div class="slide" data-label="Pipeline" style="justify-content:flex-start;padding-top:44px;">
     <span class="slide-number">06</span>
     <div class="slide-label anim">The 11-Step Pipeline</div>
-    <div class="slide-title anim d1" style="font-size:30px">Where the system works — and where the user decides</div>
+    <div class="slide-title anim d1" style="font-size:30px">Where the system works, and where the user decides</div>
 
     <div class="journey-container">
       <div class="journey-track">
         <!-- Foundation -->
         <div class="journey-phase anim d2" style="flex:1.15">
-          <div class="journey-phase-header analysis">Foundation & Audience — Autonomous</div>
+          <div class="journey-phase-header analysis">Foundation & Audience, Autonomous</div>
           <div class="journey-steps">
             <div class="journey-step">
               <div class="journey-step-left"><div class="journey-step-num">01</div></div>
@@ -429,7 +429,7 @@
 
         <!-- Strategy -->
         <div class="journey-phase anim d3">
-          <div class="journey-phase-header strategy">Strategy Synthesis — Guided</div>
+          <div class="journey-phase-header strategy">Strategy Synthesis, Guided</div>
           <div class="journey-steps">
             <div class="journey-step">
               <div class="journey-step-left"><div class="journey-step-num">05</div></div>
@@ -460,7 +460,7 @@
 
         <!-- Creative -->
         <div class="journey-phase anim d4">
-          <div class="journey-phase-header creative">Creative Development — User-Led</div>
+          <div class="journey-phase-header creative">Creative Development, User-Led</div>
           <div class="journey-steps">
             <div class="journey-step">
               <div class="journey-step-left"><div class="journey-step-num">08</div></div>
@@ -546,7 +546,7 @@
     <div class="redesign-items">
       <div class="redesign-item anim-left d2"><div class="redesign-item-title">Batch-run analytical steps</div><div class="redesign-item-text">Steps 1–7 could run as a batch with minimal user input, presenting results for review rather than requiring step-by-step confirmation. The user's taste and judgment matter most from Step 8 onward.</div></div>
       <div class="redesign-item anim-left d3"><div class="redesign-item-title">Beyond chat UI</div><div class="redesign-item-text">A dashboard view where you see all 11 steps with their outputs, click into any agent's deliverable, and have a context-aware AI sidebar. More effective than pure chat for a structured pipeline.</div></div>
-      <div class="redesign-item anim-left d4"><div class="redesign-item-title">Automated evaluation framework</div><div class="redesign-item-text">Quality assessment is currently human. At scale: automated evals — output quality scoring, consistency checks across agents, regression testing when system messages change.</div></div>
+      <div class="redesign-item anim-left d4"><div class="redesign-item-title">Automated evaluation framework</div><div class="redesign-item-text">Quality assessment is currently human. At scale: automated evals. Output quality scoring, consistency checks across agents, regression testing when system messages change.</div></div>
     </div>
   </div>
 
@@ -554,16 +554,16 @@
 
 <script>
 const agents = [
-  { step:1, name:"Assumption Logger", desc:"Surfaces and interrogates explicit + implicit assumptions. Structured 6-field blocks with Top 3 prioritized for validation.", tools:["Supabase","3-retry logging"], tags:["Explicit","Implicit"], mode:"auto", modeLabel:"Autonomous — runs without user input" },
-  { step:2, name:"Product Truth Report", desc:"16-section strategic product analysis. Competitive benchmarking, consumer voice verbatims, innovation radar, brand truth. All source-backed.", tools:["Supabase","Research/web"], tags:["Brand Truth","Competitive","Cultural"], mode:"auto", modeLabel:"Autonomous — runs without user input" },
+  { step:1, name:"Assumption Logger", desc:"Surfaces and interrogates explicit + implicit assumptions. Structured 6-field blocks with Top 3 prioritized for validation.", tools:["Supabase","3-retry logging"], tags:["Explicit","Implicit"], mode:"auto", modeLabel:"Autonomous, runs without user input" },
+  { step:2, name:"Product Truth Report", desc:"16-section strategic product analysis. Competitive benchmarking, consumer voice verbatims, innovation radar, brand truth. All source-backed.", tools:["Supabase","Research/web"], tags:["Brand Truth","Competitive","Cultural"], mode:"auto", modeLabel:"Autonomous, runs without user input" },
   { step:3, name:"Persona Mapper", desc:"1 core activation persona + 2 test angles. GWI Spark-grounded behavioral data. Personas as media test units, not empathy maps.", tools:["Supabase","GWI Spark"], tags:["Core Persona","Test Angles"], mode:"review", modeLabel:"User reviews personas before proceeding" },
-  { step:4, name:"Platform Strategist", desc:"Mobile-first digital playbook per platform. Feature audit, 3 persona hooks per persona, thumb-safe layout rules, QA checklist, future platform scan.", tools:["Supabase"], tags:["LinkedIn","Meta","TikTok","YouTube"], mode:"auto", modeLabel:"Autonomous — runs without user input" },
+  { step:4, name:"Platform Strategist", desc:"Mobile-first digital playbook per platform. Feature audit, 3 persona hooks per persona, thumb-safe layout rules, QA checklist, future platform scan.", tools:["Supabase"], tags:["LinkedIn","Meta","TikTok","YouTube"], mode:"auto", modeLabel:"Autonomous, runs without user input" },
   { step:5, name:"KPI Strategist", desc:"Pairs hard KPIs with soft/human-truth KPIs. Confidence-interval forecasts. Flags unrealistic uplift targets (>±20%). Translates every KPI into creative implications.", tools:["Supabase"], tags:["Hard KPIs","Soft KPIs","Forecasts"], mode:"review", modeLabel:"User reviews KPI targets and forecasts" },
-  { step:6, name:"4Ps Summary", desc:"Product, People, Platform, Purpose distillation. Strictest language rules in the system: 20+ banned words, max 1–2 stats per section. Quality gate before creative.", tools:["Supabase"], tags:["Quality Gate"], mode:"auto", modeLabel:"Autonomous — quality gate before creative" },
-  { step:7, name:"FORCE Framework", desc:"Focus, Orbit, Role, Culture, Effect. Bridges strategy to creative through Insight Triangle: emotional tension × cultural behavior × brand truth.", tools:["Supabase"], tags:["Strategy→Creative Bridge"], mode:"auto", modeLabel:"Autonomous — bridges strategy to creative" },
+  { step:6, name:"4Ps Summary", desc:"Product, People, Platform, Purpose distillation. Strictest language rules in the system: 20+ banned words, max 1–2 stats per section. Quality gate before creative.", tools:["Supabase"], tags:["Quality Gate"], mode:"auto", modeLabel:"Autonomous, quality gate before creative" },
+  { step:7, name:"FORCE Framework", desc:"Focus, Orbit, Role, Culture, Effect. Bridges strategy to creative through Insight Triangle: emotional tension × cultural behavior × brand truth.", tools:["Supabase"], tags:["Strategy→Creative Bridge"], mode:"auto", modeLabel:"Autonomous, bridges strategy to creative" },
   { step:8, name:"The 5 Whys", desc:"5 progressively deeper WHY questions, then 5 distinct Creative North Star options. Big Ideas in 2–8 words that pass the 'would a person say this?' test.", tools:["Supabase"], tags:["Creative North Star"], mode:"select", modeLabel:"User selects 1 of 5 Creative North Star options" },
-  { step:9, name:"Strategy Alignment", desc:"Assembles 25-slide client-facing deck from all previous outputs. All slides present; incomplete sections marked for studio.", tools:["Supabase"], tags:["Client Deliverable"], mode:"auto", modeLabel:"Autonomous — assembles deliverable" },
-  { step:10, name:"Main Ideas", desc:"7 overarching campaign ideas. 2-sentence narrative — conceptual, not executional. Natural language test: rewrite if unnatural spoken aloud.", tools:["Supabase"], tags:["Campaign Ideas"], mode:"select", modeLabel:"User selects 1 of 7 overarching ideas" },
+  { step:9, name:"Strategy Alignment", desc:"Assembles 25-slide client-facing deck from all previous outputs. All slides present; incomplete sections marked for studio.", tools:["Supabase"], tags:["Client Deliverable"], mode:"auto", modeLabel:"Autonomous, assembles deliverable" },
+  { step:10, name:"Main Ideas", desc:"7 overarching campaign ideas. 2-sentence narrative, conceptual not executional. Natural language test: rewrite if unnatural spoken aloud.", tools:["Supabase"], tags:["Campaign Ideas"], mode:"select", modeLabel:"User selects 1 of 7 overarching ideas" },
   { step:11, name:"Creative Narratives", desc:"Mobile-first creative concepts per platform. Stock/MG/UGC only. Two-tier logging: working memory for drafts, approved storage only on explicit user sign-off.", tools:["Supabase (CNC)","Supabase (TNC)"], tags:["Production-ready"], mode:"approve", modeLabel:"User approves final concepts for production" }
 ];
 
